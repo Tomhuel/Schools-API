@@ -1,0 +1,434 @@
+{
+	"info": {
+		"_postman_id": "746105ef-6d4e-414c-a610-603cd7ce6049",
+		"name": "Schools",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26242746"
+	},
+	"item": [
+		{
+			"name": "Get All Schools",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get all schools', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.be.an(\"array\");",
+							"    pm.expect(body).to.be.empty;",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Schools",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Create school', () => {",
+							"    pm.response.to.have.status(201);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.environment.set('SCHOOL_ID', body.id);",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": body.id,",
+							"            \"name\": \"Colegio Santa María\",",
+							"            \"startDate\": \"2001-09-11T00:00:00.000+00:00\",",
+							"            \"courses\": []",
+							"        }",
+							"    );",
+							"",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+							"",
+							"    const location = pm.response.headers.get('Location');",
+							"    pm.expect(location).to.include('/api/v1/schools/');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Colegio Santa María\",\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"courses\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Schools AFTER CREATION",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get all schools', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.be.an(\"array\");",
+							"    pm.expect(body).to.have.length(1);",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get School",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get single school', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": pm.environment.get('SCHOOL_ID'),",
+							"            \"name\": \"Colegio Santa María\",",
+							"            \"startDate\": \"2001-09-11T00:00:00.000+00:00\",",
+							"            \"courses\": []",
+							"        }",
+							"    );",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/schools/${pm.environment.get('SCHOOL_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{SCHOOL_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Schools",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Update school', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": body.id,",
+							"            \"name\": \"Colegio San José del Castillo Negro Explotador\",",
+							"            \"startDate\": \"2003-06-23T12:00:00.000+00:00\",",
+							"            \"courses\": []",
+							"        }",
+							"    );",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/schools/${pm.environment.get('SCHOOL_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Colegio San José del Castillo Negro Explotador\",\n    \"startDate\": \"2003-06-23T12:00:00Z\",\n    \"courses\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{SCHOOL_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get School Updated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get single school after update', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": pm.environment.get('SCHOOL_ID'),",
+							"            \"name\": \"Colegio San José del Castillo Negro Explotador\",",
+							"            \"startDate\": \"2003-06-23T12:00:00.000+00:00\",",
+							"            \"courses\": []",
+							"        }",
+							"    );",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/schools/${pm.environment.get('SCHOOL_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{SCHOOL_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE SCHOOL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Delete school', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/schools/${pm.environment.get('SCHOOL_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{SCHOOL_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get School DELETED",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get single school after delete', () => {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{SCHOOL_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Schools AFTER DELETE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get all schools after delete', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.be.an(\"array\");",
+							"    pm.expect(body).to.be.empty;",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/schools",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"schools"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

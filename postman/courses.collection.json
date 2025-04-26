@@ -1,0 +1,444 @@
+{
+	"info": {
+		"_postman_id": "73b86067-55ae-493d-ba6e-6b9964fe1831",
+		"name": "Courses",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26242746"
+	},
+	"item": [
+		{
+			"name": "Get All Courses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get all courses HTTP Status', () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Get all courses verify body', () => {",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.be.an(\"array\");",
+							"    pm.expect(body).to.be.empty;",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Create course', () => {",
+							"    pm.response.to.have.status(201);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.environment.set('COURSE_ID', body.id);",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": body.id,",
+							"            \"name\": \"Curso de cocina medieval\",",
+							"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
+							"            \"students\": [],",
+							"            \"teacher\": null,",
+							"            \"school\": null",
+							"        }",
+							"    );",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+							"",
+							"    const location = pm.response.headers.get('Location');",
+							"    pm.expect(location).to.include('/api/v1/courses/');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Courses AFTER CREATION",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get all courses', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.be.an(\"array\");",
+							"    pm.expect(body).to.have.length(1);",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get single course', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": pm.environment.get('COURSE_ID'),",
+							"            \"name\": \"Curso de cocina medieval\",",
+							"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
+							"            \"students\": [],",
+							"            \"teacher\": null,",
+							"            \"school\": null",
+							"        }",
+							"    );",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{COURSE_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Update course', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": body.id,",
+							"            \"name\": \"Curso de cocina nórdica\",",
+							"            \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",",
+							"            \"students\": [],",
+							"            \"teacher\": null,",
+							"            \"school\": null",
+							"        }",
+							"    );",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Curso de cocina nórdica\",\n    \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{COURSE_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Course Updated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get single course updated', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.deep.include(",
+							"        {",
+							"            \"id\": pm.environment.get('COURSE_ID'),",
+							"            \"name\": \"Curso de cocina nórdica\",",
+							"            \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",",
+							"            \"students\": [],",
+							"            \"teacher\": null,",
+							"            \"school\": null",
+							"        }",
+							"    );",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{COURSE_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Delete course', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{COURSE_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Course DELETED",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get single course after delete', () => {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses/:id",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{COURSE_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Courses AFTER DELETE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Get all course after delete', () => {",
+							"    pm.response.to.have.status(200);",
+							"    const res = pm.response.json();",
+							"    const body = res.body;",
+							"    pm.expect(body).to.be.an(\"array\");",
+							"    pm.expect(body).to.be.empty;",
+							"    pm.expect(res.timestamp).to.be.not.empty;",
+							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/api/v1/courses",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"courses"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -15,7 +15,7 @@ public class Teacher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    private UUID id;
 
     private String name;
     private String lastname;

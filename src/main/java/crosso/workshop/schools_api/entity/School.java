@@ -16,7 +16,7 @@ public class School {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    private UUID id;
 
     private String name;
     private Date startDate;

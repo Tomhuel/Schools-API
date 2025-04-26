@@ -1,6 +1,7 @@
 package crosso.workshop.schools_api.service;
 
 import crosso.workshop.schools_api.entity.Teacher;
+import crosso.workshop.schools_api.exception.EntityNotFoundException;
 import crosso.workshop.schools_api.repository.TeacherRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,15 @@ public class TeacherService {
         return teacherRepository.findAll();
     }
 
-    public Teacher getById(UUID id) {
-        return teacherRepository.findById(id).orElseThrow();
+    public Teacher getById(UUID id) throws EntityNotFoundException {
+        return teacherRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Teacher", id.toString()));
     }
 
-    public UUID update(UUID id, Teacher teacher) {
+    public Teacher create(Teacher teacher) {
+        return teacherRepository.save(teacher);
+    }
+
+    public Teacher update(UUID id, Teacher teacher) throws EntityNotFoundException {
         Teacher existingTeacher = this.getById(id);
 
         existingTeacher.setName(teacher.getName());
@@ -32,12 +37,11 @@ public class TeacherService {
         existingTeacher.setEmail(teacher.getEmail());
         existingTeacher.setLastname(teacher.getLastname());
         existingTeacher.setCourses(teacher.getCourses());
-        existingTeacher.setUuid(teacher.getUuid());
 
-        return teacherRepository.save(existingTeacher).getUuid();
+        return teacherRepository.save(existingTeacher);
     }
 
-    public void delete(UUID id) {
+    public void delete(UUID id) throws EntityNotFoundException {
         Teacher existingTeacher = this.getById(id);
         teacherRepository.delete(existingTeacher);
     }
