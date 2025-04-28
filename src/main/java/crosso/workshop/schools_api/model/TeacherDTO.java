@@ -1,20 +1,16 @@
-package crosso.workshop.schools_api.entity;
+package crosso.workshop.schools_api.model;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
 import java.util.UUID;
 
-@Entity(name = "teachers")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Teacher {
+public class TeacherDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;
@@ -24,9 +20,7 @@ public class Teacher {
     private Integer age;
     private String address;
 
-    @OneToMany(mappedBy = "teacher")
-    private Set<Course> courses;
+    private Set<CourseDTO> courses;
 
-    @ManyToMany
-    private Set<Student> students;
+    private Set<StudentDTO> students;
 }

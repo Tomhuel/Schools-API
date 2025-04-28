@@ -12,7 +12,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class School {
+public class SchoolEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,5 +22,5 @@ public class School {
     private Date startDate;
 
     @OneToMany(mappedBy = "school", cascade = CascadeType.REMOVE)
-    private Set<Course> courses;
+    private Set<CourseEntity> course;
 }

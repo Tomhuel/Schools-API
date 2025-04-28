@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Student {
+public class StudentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,8 +22,8 @@ public class Student {
     private String address;
 
     @ManyToMany
-    private Set<Course> courses;
+    private Set<CourseEntity> course;
 
     @ManyToMany
-    private Set<Teacher> teachers;
+    private Set<TeacherEntity> teacherEntities;
 }

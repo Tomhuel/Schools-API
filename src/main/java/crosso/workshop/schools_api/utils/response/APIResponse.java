@@ -9,5 +9,5 @@ public class APIResponse<T> {
 
     private T body;
     private LocalDateTime timestamp = LocalDateTime.now();
-    private String URI;
+    private String uri;
 }

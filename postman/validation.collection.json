@@ -1,0 +1,2033 @@
+{
+	"info": {
+		"_postman_id": "ebea194a-da34-476b-a687-b865f709ed90",
+		"name": "Model Validations",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26242746"
+	},
+	"item": [
+		{
+			"name": "course",
+			"item": [
+				{
+					"name": "invalid",
+					"item": [
+						{
+							"name": "spaces in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Course.name\",",
+											"            \"uri\": \"/api/v1/courses\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"              COURSE         \",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "empty name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Course.name\",",
+											"            \"uri\": \"/api/v1/courses\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Course.name\",",
+											"            \"uri\": \"/api/v1/courses\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"12387Course983420\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid course code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Course.code\",",
+											"            \"uri\": \"/api/v1/courses\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso Épico\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"REALLY BAD CODE 982103\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null description",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Course.description\",",
+											"            \"uri\": \"/api/v1/courses\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso NO Épico\",\n    \"description\": null,\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "schools",
+			"item": [
+				{
+					"name": "invalid",
+					"item": [
+						{
+							"name": "trim spaces",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"School.name\",",
+											"            \"uri\": \"/api/v1/schools\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"              COURSE         \",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"teacher\": null,\n    \"school\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"School.name\",",
+											"            \"uri\": \"/api/v1/schools\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"12387Course983420\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"teacher\": null,\n    \"school\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null startDate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"School.startDate\",",
+											"            \"uri\": \"/api/v1/schools\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Colegio Monjas REPO\",\n    \"startDate\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "student",
+			"item": [
+				{
+					"name": "invalid",
+					"item": [
+						{
+							"name": "trim spaces",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.name\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"   Niño    NPC   \",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.name\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC28139013\",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special characters in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.name\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"N,i.ñoNPC$$$$\",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "empty address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.address\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.address\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": null,\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null age",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.age\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"Casa loca\",\n    \"age\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too young",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.age\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"Casa loca\",\n    \"age\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too old",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.age\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"Casa loca\",\n    \"age\": 13\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "teacher",
+			"item": [
+				{
+					"name": "invalid",
+					"item": [
+						{
+							"name": "trim spaces",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.name\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"   Profe    NPC   \",\n    \"lastname\": \"NPC\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.name\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"1Teacher2913821340\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special characters in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.name\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"T€ACH€RRR\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "trim spaces in lastname",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.lastname\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \" NP    C \",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in lastname",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.lastname\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"1283714\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special characters in lastname",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.lastname\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC$$$\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "empty address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.address\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.address\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": null,\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null age",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.age\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": null,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too young",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Student.age\",",
+											"            \"uri\": \"/api/v1/students\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 16,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too old",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.age\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 80,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null phone",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.phone\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 50,\n    \"phone\": null,\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "empty phone",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.phone\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid phone",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.phone\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"HELLO57831241\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid phone 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.phone\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"myohonenumber\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid phone 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.phone\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"479832174831284723894732482347239487238432\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "empty email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.email\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.email\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid email 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.email\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"email dot com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid email 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.email\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"pacoemail.com@\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid email 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
+											"        {",
+											"            \"causedBy\": \"Teacher.email\",",
+											"            \"uri\": \"/api/v1/teachers\"",
+											"        }",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"paco.perez@emailcom\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "check created models",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all courses HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all courses verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Schools",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all schools', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/schools",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"schools"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Students",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all students HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all students verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Teachers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all teachers HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all teachers verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,12 +1,11 @@
 package crosso.workshop.schools_api.controller;
 
-import crosso.workshop.schools_api.entity.School;
-import crosso.workshop.schools_api.exception.EntityNotFoundException;
+import crosso.workshop.schools_api.model.SchoolDTO;
 import crosso.workshop.schools_api.service.SchoolService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,28 +22,30 @@ public class SchoolController {
     private final HttpServletRequest httpServletRequest;
 
     @GetMapping()
-    public ResponseEntity<APIResponse<List<School>>> getAllSchools() {
-        List<School> schools = schoolService.getAll();
-        APIResponse<List<School>> response = new APIResponse<>();
+    public ResponseEntity<APIResponse<List<SchoolDTO>>> getAllSchools() {
+        List<SchoolDTO> schools = schoolService.getAll();
+        APIResponse<List<SchoolDTO>> response = new APIResponse<>();
         response.setBody(schools);
-        response.setURI(httpServletRequest.getRequestURI());
+        response.setUri(httpServletRequest.getRequestURI());
 
         return ResponseEntity.ok(response);
     }
 
+    @SneakyThrows
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<School>> getByID(@PathVariable UUID id) throws EntityNotFoundException {
-        School school = schoolService.getById(id);
-        APIResponse<School> response = new APIResponse<>();
+    public ResponseEntity<APIResponse<SchoolDTO>> getByID(@PathVariable UUID id) {
+        SchoolDTO school = schoolService.getById(id);
+        APIResponse<SchoolDTO> response = new APIResponse<>();
         response.setBody(school);
-        response.setURI(httpServletRequest.getRequestURI());
+        response.setUri(httpServletRequest.getRequestURI());
         return ResponseEntity.ok(response);
     }
 
+    @SneakyThrows
     @PostMapping()
-    public ResponseEntity<APIResponse<School>> createSchool(@RequestBody School school) {
+    public ResponseEntity<APIResponse<SchoolDTO>> createSchool(@RequestBody SchoolDTO school) {
         school = schoolService.create(school);
-        APIResponse<School> response = new APIResponse<>();
+        APIResponse<SchoolDTO> response = new APIResponse<>();
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -53,27 +54,29 @@ public class SchoolController {
                 .toUri();
 
         response.setBody(school);
-        response.setURI(httpServletRequest.getRequestURI());
+        response.setUri(httpServletRequest.getRequestURI());
 
         return ResponseEntity.created(location).body(response);
     }
 
+    @SneakyThrows
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<School>> updateSchool(@PathVariable UUID id, @RequestBody School school) throws EntityNotFoundException {
+    public ResponseEntity<APIResponse<SchoolDTO>> updateSchool(@PathVariable UUID id, @RequestBody SchoolDTO school) {
         school = schoolService.update(id, school);
-        APIResponse<School> response = new APIResponse<>();
-        response.setURI(httpServletRequest.getRequestURI());
+        APIResponse<SchoolDTO> response = new APIResponse<>();
+        response.setUri(httpServletRequest.getRequestURI());
         response.setBody(school);
 
         return ResponseEntity.ok(response);
     }
 
+    @SneakyThrows
     @DeleteMapping("/{id}")
-    public ResponseEntity<APIResponse<String>> deleteSchool(@PathVariable UUID id) throws EntityNotFoundException {
+    public ResponseEntity<APIResponse<String>> deleteSchool(@PathVariable UUID id) {
         schoolService.delete(id);
         APIResponse<String> response = new APIResponse<>();
-        response.setBody("School deleted succesfully");
-        response.setURI(httpServletRequest.getRequestURI());
+        response.setBody("School deleted successfully");
+        response.setUri(httpServletRequest.getRequestURI());
 
         return ResponseEntity.ok(response);
     }
