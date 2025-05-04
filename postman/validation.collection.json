@@ -22,12 +22,15 @@
 											"pm.test('Create course with invalid spaces', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Course.name\",",
-											"            \"uri\": \"/api/v1/courses\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDTO.name\" && ",
+											"        err.rejectedValue === \"              COURSE         \" && err.description === \"Course's name cannot contain spaces at the start and the end of the string\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -68,15 +71,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course with invalid spaces', () => {",
+											"pm.test('Create course with empty name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Course.name\",",
-											"            \"uri\": \"/api/v1/courses\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDTO.name\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Course's name cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -117,15 +123,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course', () => {",
+											"pm.test('Create course with numbers in name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Course.name\",",
-											"            \"uri\": \"/api/v1/courses\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDTO.name\" && ",
+											"        err.rejectedValue === \"12387Course983420\" && err.description === \"Course's name cannot contain any numbers\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -160,21 +169,76 @@
 							"response": []
 						},
 						{
+							"name": "special chars in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with special chars in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDTO.name\" && ",
+											"        err.rejectedValue === \"$$course$$\" && err.description === \"Course's name cannot contain special characters\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"$$course$$\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "invalid course code",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course', () => {",
+											"pm.test('Create course with invalid course code', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Course.code\",",
-											"            \"uri\": \"/api/v1/courses\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDTO.code\" && ",
+											"        err.rejectedValue === \"REALLY BAD CODE 982103\" && err.description === \"must match \\\"^[A-Z]{3}\\\\d$\\\"\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -215,15 +279,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course', () => {",
+											"pm.test('Create course with null description', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Course.description\",",
-											"            \"uri\": \"/api/v1/courses\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDTO.description\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Course's description cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -274,15 +341,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course with invalid spaces', () => {",
+											"pm.test('Create school with spaces around name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"School.name\",",
-											"            \"uri\": \"/api/v1/schools\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"schoolDTO.name\" && ",
+											"        err.rejectedValue === \"              SCHOOL         \" && err.description === \"School's name cannot contain any space character at the start or end of the string\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -295,7 +365,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"              COURSE         \",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"teacher\": null,\n    \"school\": null\n}",
+									"raw": "{\n    \"name\": \"              SCHOOL         \",\n    \"startDate\": \"2001-09-11T00:00:00Z\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -323,15 +393,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course', () => {",
+											"pm.test('Create school with numbers in name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"School.name\",",
-											"            \"uri\": \"/api/v1/schools\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"schoolDTO.name\" && ",
+											"        err.rejectedValue === \"12387Course983420\" && err.description === \"School's name cannot contain any number\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -344,7 +417,59 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"12387Course983420\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"teacher\": null,\n    \"school\": null\n}",
+									"raw": "{\n    \"name\": \"12387Course983420\",\n    \"startDate\": \"2001-09-11T00:00:00Z\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special chars in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create school with special chars in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"schoolDTO.name\" && ",
+											"        err.rejectedValue === \"$$school$$\" && err.description === \"School's name cannot contain any special characters\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"$$school$$\",\n    \"startDate\": \"2001-09-11T00:00:00Z\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -372,15 +497,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course', () => {",
+											"pm.test('Create school with null start date', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"School.startDate\",",
-											"            \"uri\": \"/api/v1/schools\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"schoolDTO.startDate\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"School's start date cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -394,6 +522,110 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"name\": \"Colegio Monjas REPO\",\n    \"startDate\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "future startDate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create school with a future start date from now', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"schoolDTO.startDate\" && ",
+											"        err.rejectedValue === \"Thu Sep 11 01:00:00 BST 3000\" && err.description === \"School's start date cannot be from the future\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Colegio Monjas REPO\",\n    \"startDate\": \"3000-09-11T00:00:00Z\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "over 200yo old startDate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create school with start date over 200yo', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"schoolDTO.startDate\" && ",
+											"        err.rejectedValue === \"Wed Sep 11 00:00:00 GMT 1000\" && err.description === \"School's start date cannot be earlier from 200 years ago\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Colegio Monjas REPO\",\n    \"startDate\": \"1000-09-11T00:00:00Z\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -434,12 +666,15 @@
 											"pm.test('Create student with invalid spaces', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.name\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.name\" && ",
+											"        err.rejectedValue === \"   Niño    NPC   \" && err.description === \"Student's name cannot contain any space character at the end and the start of the string\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -480,15 +715,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create student with numbers in name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.name\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.name\" && ",
+											"        err.rejectedValue === \"NiñoNPC28139013\" && err.description === \"Student's name cannot contain any number\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -529,15 +767,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create student with special characters in name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.name\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.name\" && ",
+											"        err.rejectedValue === \"N,i.ñoNPC$$$$\" && err.description === \"Student's name cannot contain any special character\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -578,15 +819,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create course', () => {",
+											"pm.test('Create student with empty address', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.address\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.address\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Student's address cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -627,15 +871,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create student with null address', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.address\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.address\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Student's address cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -676,15 +923,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create student with null age', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.age\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.age\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Student's age cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -725,15 +975,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create student younger age', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.age\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.age\" && ",
+											"        err.rejectedValue === \"2\" && err.description === \"Student's age must be greater or equal 3\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -774,15 +1027,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create student with older age', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.age\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDTO.age\" && ",
+											"        err.rejectedValue === \"13\" && err.description === \"Student's age must be lower or equal 12\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -836,12 +1092,15 @@
 											"pm.test('Create teacher with invalid spaces', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.name\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.name\" && ",
+											"        err.rejectedValue === \"   Profe    NPC   \" && err.description === \"Teacher's name cannot contain separation characters around the content\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -882,15 +1141,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create teacher with invalid spaces', () => {",
+											"pm.test('Create teacher with numbers in name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.name\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.name\" && ",
+											"        err.rejectedValue === \"1Teacher2913821340\" && err.description === \"Teacher's name cannot contain any number\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -931,15 +1193,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create teacher with invalid spaces', () => {",
+											"pm.test('Create teacher with special characters in name', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.name\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.name\" && ",
+											"        err.rejectedValue === \"T€ACH€RRR\" && err.description === \"Teacher's name cannot contain any special character\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -983,12 +1248,15 @@
 											"pm.test('Create teacher with invalid spaces', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.lastname\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.lastname\" && ",
+											"        err.rejectedValue === \" NP    C \" && err.description === \"Teacher's lastname cannot contain separation characters around the content\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1029,15 +1297,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create teacher with invalid spaces', () => {",
+											"pm.test('Create teacher with numbers in lastname', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.lastname\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.lastname\" && ",
+											"        err.rejectedValue === \"1283714\" && err.description === \"Teacher's lastname cannot contain any number\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1078,15 +1349,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create teacher with invalid spaces', () => {",
+											"pm.test('Create teacher with special characters in lastname', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.lastname\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.lastname\" && ",
+											"        err.rejectedValue === \"NPC$$$\" && err.description === \"Teacher's lastname cannot contain any special character\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1127,15 +1401,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create teacher with invalid spaces', () => {",
+											"pm.test('Create teacher with empty address', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.address\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.address\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Teacher's address cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1176,15 +1453,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create teacher with invalid spaces', () => {",
+											"pm.test('Create teacher with null address', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.address\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.address\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's address cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1225,15 +1505,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with null age', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.age\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.age\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's age cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1274,15 +1557,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with younger age', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Student.age\",",
-											"            \"uri\": \"/api/v1/students\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.age\" && ",
+											"        err.rejectedValue === \"16\" && err.description === \"Teacher's age must be greater or equal 23\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1303,14 +1589,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/api/v1/students",
+									"raw": "{{BASE_URL}}/api/v1/teachers",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"api",
 										"v1",
-										"students"
+										"teachers"
 									]
 								}
 							},
@@ -1323,15 +1609,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with older age', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.age\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.age\" && ",
+											"        err.rejectedValue === \"80\" && err.description === \"Teacher's age must be lower or equal 73\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1372,15 +1661,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with null phone', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.phone\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.phone\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's phone number cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1421,15 +1713,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with empty phone', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.phone\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.phone\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Teacher's phone number cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1470,15 +1765,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with wrong phone number', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.phone\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.phone\" && ",
+											"        err.rejectedValue === \"HELLO57831241\" && err.description === \"Teacher's phone must have the correct format\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1519,15 +1817,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with wrong phone number', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.phone\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.phone\" && ",
+											"        err.rejectedValue === \"myohonenumber\" && err.description === \"Teacher's phone must have the correct format\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1568,15 +1869,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with wrong phone number', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.phone\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.phone\" && ",
+											"        err.rejectedValue === \"479832174831284723894732482347239487238432\" && err.description === \"Teacher's phone must have the correct format\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1617,15 +1921,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with empty email', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.email\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.email\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Teacher's email cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1666,15 +1973,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with null email', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.email\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.email\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's email cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1715,15 +2025,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with wrong email', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.email\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.email\" && ",
+											"        err.rejectedValue === \"email dot com\" && err.description === \"Teacher's email must have the correct format: {user}@{domain}.{tld}\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1764,15 +2077,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with wrong email', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.email\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.email\" && ",
+											"        err.rejectedValue === \"pacoemail.com@\" && err.description === \"Teacher's email must have the correct format: {user}@{domain}.{tld}\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1813,15 +2129,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test('Create student', () => {",
+											"pm.test('Create teacher with wrong email', () => {",
 											"    pm.response.to.have.status(400);",
 											"    const res = pm.response.json();",
-											"    pm.expect(res, 'Checking valid error body').to.deep.include(",
-											"        {",
-											"            \"causedBy\": \"Teacher.email\",",
-											"            \"uri\": \"/api/v1/teachers\"",
-											"        }",
-											"    )",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDTO.email\" && ",
+											"        err.rejectedValue === \"paco.perez@emailcom\" && err.description === \"Teacher's email must have the correct format: {user}@{domain}.{tld}\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
 											"});"
 										],
 										"type": "text/javascript",

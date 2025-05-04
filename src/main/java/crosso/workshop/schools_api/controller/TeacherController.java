@@ -4,6 +4,7 @@ import crosso.workshop.schools_api.model.TeacherDTO;
 import crosso.workshop.schools_api.service.TeacherService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class TeacherController {
 
     @SneakyThrows
     @PostMapping()
-    public ResponseEntity<APIResponse<TeacherDTO>> createTeacher(@RequestBody TeacherDTO teacher) {
+    public ResponseEntity<APIResponse<TeacherDTO>> createTeacher(@RequestBody @Valid TeacherDTO teacher) {
         teacher = teacherService.create(teacher);
         APIResponse<TeacherDTO> response = new APIResponse<>();
 
@@ -60,7 +61,7 @@ public class TeacherController {
 
     @SneakyThrows
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<TeacherDTO>> updateTeacher(@PathVariable UUID id, @RequestBody TeacherDTO teacher) {
+    public ResponseEntity<APIResponse<TeacherDTO>> updateTeacher(@PathVariable UUID id, @RequestBody @Valid TeacherDTO teacher) {
         teacher = teacherService.update(id, teacher);
         APIResponse<TeacherDTO> response = new APIResponse<>();
 

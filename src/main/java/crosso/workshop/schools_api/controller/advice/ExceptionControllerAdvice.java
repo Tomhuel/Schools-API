@@ -1,13 +1,16 @@
 package crosso.workshop.schools_api.controller.advice;
 
 import crosso.workshop.schools_api.exception.EntityNotFoundException;
-import crosso.workshop.schools_api.exception.InvalidFieldException;
 import crosso.workshop.schools_api.utils.response.ErrorResponse;
+import crosso.workshop.schools_api.utils.response.field.ErrorField;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.Collections;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice {
@@ -15,18 +18,24 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> entityNotFound(EntityNotFoundException exception, HttpServletRequest httpServletRequest) {
         ErrorResponse error = new ErrorResponse();
-        error.setDescription(exception.getMessage());
-        error.setCausedBy(exception.getError());
+        error.setErrors(Collections.singletonList(new ErrorField(exception.getMessage(), exception.getError(), exception.getIdNotFound())));
         error.setUri(httpServletRequest.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidFieldException.class)
-    public ResponseEntity<ErrorResponse> invalidField(InvalidFieldException exception, HttpServletRequest httpServletRequest) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> validationError(MethodArgumentNotValidException e, HttpServletRequest httpServletRequest) {
         ErrorResponse error = new ErrorResponse();
-        error.setDescription(exception.getDescription());
-        error.setCausedBy(exception.getMessage());
+
+        var errors = e.getBindingResult().getFieldErrors().stream().map(fieldError -> {
+            String causedBy = String.format("%s.%s", fieldError.getObjectName(), fieldError.getField());
+            String description = fieldError.getDefaultMessage();
+            return new ErrorField(causedBy, description, String.valueOf(fieldError.getRejectedValue()));
+        }).toList();
+
+        error.setErrors(errors);
         error.setUri(httpServletRequest.getRequestURI());
+
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

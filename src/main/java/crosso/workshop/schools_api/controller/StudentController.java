@@ -4,6 +4,7 @@ import crosso.workshop.schools_api.model.StudentDTO;
 import crosso.workshop.schools_api.service.StudentService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class StudentController {
 
     @SneakyThrows
     @PostMapping
-    public ResponseEntity<APIResponse<StudentDTO>> createStudent(@RequestBody StudentDTO student) {
+    public ResponseEntity<APIResponse<StudentDTO>> createStudent(@RequestBody @Valid StudentDTO student) {
         student = studentService.create(student);
 
         APIResponse<StudentDTO> response = new APIResponse<>();
@@ -64,7 +65,7 @@ public class StudentController {
 
     @SneakyThrows
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<StudentDTO>> updateStudent(@PathVariable UUID id, @RequestBody StudentDTO student) {
+    public ResponseEntity<APIResponse<StudentDTO>> updateStudent(@PathVariable UUID id, @RequestBody @Valid StudentDTO student) {
         student = studentService.update(id, student);
         APIResponse<StudentDTO> response = new APIResponse<>();
 

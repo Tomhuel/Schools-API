@@ -8,9 +8,11 @@ import lombok.EqualsAndHashCode;
 public class EntityNotFoundException extends Exception {
 
     private String error;
+    private String idNotFound;
 
     public EntityNotFoundException(String entity, String id) {
         super(String.format("Entity %s with id %s not found", entity, id));
         this.error = String.format("%s.id", entity);
+        this.idNotFound = id;
     }
 }
