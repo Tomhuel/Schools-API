@@ -14,12 +14,13 @@ public class NotYearsOlderValidator implements ConstraintValidator<NotYearsOlder
     @Override
     public void initialize(NotYearsOlderThan annotation) {
         Calendar current = Calendar.getInstance();
-        current.add(Calendar.YEAR, -200);
+        current.add(Calendar.YEAR, -annotation.years());
         this.oldDate = current.getTime();
     }
 
     @Override
     public boolean isValid(Date date, ConstraintValidatorContext constraintValidatorContext) {
+        if (date == null) return true;
         return date.after(this.oldDate);
     }
 }

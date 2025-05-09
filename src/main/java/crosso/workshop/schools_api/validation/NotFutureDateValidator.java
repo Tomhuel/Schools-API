@@ -11,6 +11,7 @@ public class NotFutureDateValidator implements ConstraintValidator<NotFutureDate
 
     @Override
     public boolean isValid(Date date, ConstraintValidatorContext constraintValidatorContext) {
+        if (date == null) return true;
         return date.before(current);
     }
 }

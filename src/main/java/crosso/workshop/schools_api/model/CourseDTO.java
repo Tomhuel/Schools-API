@@ -19,7 +19,7 @@ public class CourseDTO {
     @NotBlank(message = "Course's name cannot be blank")
     @NotContainSpecialCharacters(message = "Course's name cannot contain special characters")
     @NotContainNumbers(message = "Course's name cannot contain any numbers")
-    @Stripped(message = "Course's name cannot contain spaces at the start and the end of the string")
+    @Trimmed(message = "Course's name cannot contain spaces at the start and the end of the string")
     private String name;
 
     @NotNull(message = "Course's description cannot be null")

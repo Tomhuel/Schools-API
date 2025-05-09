@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class NotContainSpaceCharactersValidator implements ConstraintValidator<NotContainSpaceCharacters, String> {
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
+        if (s == null) return true;
         return s.chars().noneMatch(Character::isSpaceChar);
     }
 }

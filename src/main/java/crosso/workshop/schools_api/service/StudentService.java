@@ -34,7 +34,8 @@ public class StudentService {
         return mapper.map(studentEntity, StudentDTO.class);
     }
 
-    public StudentDTO update(UUID id, StudentDTO student) {
+    public StudentDTO update(UUID id, StudentDTO student) throws EntityNotFoundException {
+        if (!studentRepository.existsById(id)) throw new EntityNotFoundException("Course", id.toString());
         student.setId(id);
         StudentEntity studentEntity = mapper.map(student, StudentEntity.class);
         studentEntity = studentRepository.save(studentEntity);

@@ -67,7 +67,8 @@
 							"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
 							"            \"students\": [],",
 							"            \"teacher\": null,",
-							"            \"school\": null",
+							"            \"school\": null,",
+							"            \"code\": \"CCM1\"",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -87,7 +88,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null\n}",
+					"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"students\": []\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -219,7 +220,8 @@
 							"            \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",",
 							"            \"students\": [],",
 							"            \"teacher\": null,",
-							"            \"school\": null",
+							"            \"school\": null,",
+							"            \"code\": \"MCC1\"",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -236,7 +238,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Curso de cocina nórdica\",\n    \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null\n}",
+					"raw": "{\n    \"name\": \"Curso de cocina nórdica\",\n    \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",\n    \"code\": \"MCC1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

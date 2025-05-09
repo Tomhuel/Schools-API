@@ -33,7 +33,8 @@ public class CourseService {
         return mapper.map(courseEntity, CourseDTO.class);
     }
 
-    public CourseDTO update(UUID id, CourseDTO course) {
+    public CourseDTO update(UUID id, CourseDTO course) throws EntityNotFoundException {
+        if (!courseRepository.existsById(id)) throw new EntityNotFoundException("Course", id.toString());
         course.setId(id);
         CourseEntity courseEntity = mapper.map(course, CourseEntity.class);
         courseEntity = courseRepository.save(courseEntity);

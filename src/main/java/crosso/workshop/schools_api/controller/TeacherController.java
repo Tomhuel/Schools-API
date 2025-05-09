@@ -3,13 +3,13 @@ package crosso.workshop.schools_api.controller;
 import crosso.workshop.schools_api.model.TeacherDTO;
 import crosso.workshop.schools_api.service.TeacherService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
+import crosso.workshop.schools_api.utils.response.headers.URIFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.UUID;
 public class TeacherController {
     private final TeacherService teacherService;
     private final HttpServletRequest httpServletRequest;
+    private final URIFactory uriFactory;
 
     @GetMapping()
     public ResponseEntity<APIResponse<List<TeacherDTO>>> getAllTeacher() {
@@ -51,7 +52,7 @@ public class TeacherController {
         teacher = teacherService.create(teacher);
         APIResponse<TeacherDTO> response = new APIResponse<>();
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(teacher.getId()).toUri();
+        URI location = uriFactory.buildFromCurrentRequestWithUuid(teacher.getId());
 
         response.setUri(httpServletRequest.getRequestURI());
         response.setBody(teacher);

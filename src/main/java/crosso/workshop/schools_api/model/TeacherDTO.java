@@ -20,7 +20,7 @@ public class TeacherDTO {
     @NotContainSpaceCharacters(message = "Teacher's name cannot contain any space character")
     @NotContainSpecialCharacters(message = "Teacher's name cannot contain any special character")
     @NotContainNumbers(message = "Teacher's name cannot contain any number")
-    @Stripped(message = "Teacher's name cannot contain separation characters around the content")
+    @Trimmed(message = "Teacher's name cannot contain separation characters around the content")
     private String name;
 
     @NotNull(message = "Teacher's lastname cannot be null")
@@ -28,7 +28,7 @@ public class TeacherDTO {
     @NotContainSpaceCharacters(message = "Teacher's lastname cannot contain any space character")
     @NotContainSpecialCharacters(message = "Teacher's lastname cannot contain any special character")
     @NotContainNumbers(message = "Teacher's lastname cannot contain any number")
-    @Stripped(message = "Teacher's lastname cannot contain separation characters around the content")
+    @Trimmed(message = "Teacher's lastname cannot contain separation characters around the content")
     private String lastname;
 
     @NotNull(message = "Teacher's email cannot be null")

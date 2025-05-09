@@ -19,7 +19,7 @@ public class SchoolDTO {
     @NotBlank(message = "School's name cannot be blank")
     @NotContainSpecialCharacters(message = "School's name cannot contain any special characters")
     @NotContainNumbers(message = "School's name cannot contain any number")
-    @Stripped(message = "School's name cannot contain any space character at the start or end of the string")
+    @Trimmed(message = "School's name cannot contain any space character at the start or end of the string")
     private String name;
 
     @NotNull(message = "School's start date cannot be null")

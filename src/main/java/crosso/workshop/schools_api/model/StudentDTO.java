@@ -19,7 +19,7 @@ public class StudentDTO {
 
     @NotNull(message = "Student's name cannot be null")
     @NotBlank(message = "Student's name cannot be blank")
-    @Stripped(message = "Student's name cannot contain any space character at the end and the start of the string")
+    @Trimmed(message = "Student's name cannot contain any space character at the end and the start of the string")
     @NotContainNumbers(message = "Student's name cannot contain any number")
     @NotContainSpecialCharacters(message = "Student's name cannot contain any special character")
     private String name;
