@@ -66,8 +66,8 @@
 							"            \"name\": \"Juanjo\",",
 							"            \"age\": 12,",
 							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
+							"            \"teachers\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -164,8 +164,8 @@
 							"            \"name\": \"Juanjo\",",
 							"            \"age\": 12,",
 							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
+							"            \"teachers\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -216,10 +216,10 @@
 							"        {",
 							"            \"id\": body.id,",
 							"            \"name\": \"Juan Miguel\",",
-							"            \"age\": 13,",
+							"            \"age\": 11,",
 							"            \"address\": \"Calle San Miguel del Chinyero\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
+							"            \"teachers\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -236,7 +236,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Juan Miguel\",\n    \"age\": 13,\n    \"address\": \"Calle San Miguel del Chinyero\",\n    \"teachers\": [],\n    \"courses\": []\n}",
+					"raw": "{\n    \"name\": \"Juan Miguel\",\n    \"age\": 11,\n    \"address\": \"Calle San Miguel del Chinyero\",\n    \"teachers\": [],\n    \"courses\": []\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -279,10 +279,10 @@
 							"        {",
 							"            \"id\": pm.environment.get('STUDENT_ID'),",
 							"            \"name\": \"Juan Miguel\",",
-							"            \"age\": 13,",
+							"            \"age\": 11,",
 							"            \"address\": \"Calle San Miguel del Chinyero\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
+							"            \"teachers\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -439,6 +439,43 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "Doe123",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "MiniJohn",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

@@ -69,8 +69,8 @@
 							"            \"phone\": \"644578205\",",
 							"            \"age\": 23,",
 							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
+							"            \"students\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -90,7 +90,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 23,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"students\": [],\n    \"courses\": []\n}",
+					"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 23,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"students\": null,\n    \"courses\": null\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -170,8 +170,8 @@
 							"            \"phone\": \"644578205\",",
 							"            \"age\": 23,",
 							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
+							"            \"students\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -227,8 +227,8 @@
 							"            \"phone\": \"644578205\",",
 							"            \"age\": 25,",
 							"            \"address\": \"Calle Santiago del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
+							"            \"students\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -293,8 +293,8 @@
 							"            \"phone\": \"644578205\",",
 							"            \"age\": 25,",
 							"            \"address\": \"Calle Santiago del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
+							"            \"students\": null,",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -451,6 +451,43 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "Doe123",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "John",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

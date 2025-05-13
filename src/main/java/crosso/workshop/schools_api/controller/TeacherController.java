@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,6 +25,7 @@ public class TeacherController {
     private final URIFactory uriFactory;
 
     @GetMapping()
+    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER')")
     public ResponseEntity<APIResponse<List<TeacherDTO>>> getAllTeacher() {
         List<TeacherDTO> teacherEntities = teacherService.getAll();
         APIResponse<List<TeacherDTO>> response = new APIResponse<>();
@@ -36,6 +38,7 @@ public class TeacherController {
 
     @SneakyThrows
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER')")
     public ResponseEntity<APIResponse<TeacherDTO>> getTeacher(@PathVariable UUID id) {
         TeacherDTO teacher = teacherService.getById(id);
         APIResponse<TeacherDTO> response = new APIResponse<>();
@@ -48,6 +51,7 @@ public class TeacherController {
 
     @SneakyThrows
     @PostMapping()
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<TeacherDTO>> createTeacher(@RequestBody @Valid TeacherDTO teacher) {
         teacher = teacherService.create(teacher);
         APIResponse<TeacherDTO> response = new APIResponse<>();
@@ -62,6 +66,7 @@ public class TeacherController {
 
     @SneakyThrows
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<TeacherDTO>> updateTeacher(@PathVariable UUID id, @RequestBody @Valid TeacherDTO teacher) {
         teacher = teacherService.update(id, teacher);
         APIResponse<TeacherDTO> response = new APIResponse<>();
@@ -74,6 +79,7 @@ public class TeacherController {
 
     @SneakyThrows
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<String>> deleteTeacher(@PathVariable UUID id) {
         teacherService.delete(id);
         APIResponse<String> response = new APIResponse<>();

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,6 +25,7 @@ public class SchoolController {
     private final URIFactory uriFactory;
 
     @GetMapping()
+    @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
     public ResponseEntity<APIResponse<List<SchoolDTO>>> getAllSchools() {
         List<SchoolDTO> schools = schoolService.getAll();
         APIResponse<List<SchoolDTO>> response = new APIResponse<>();
@@ -35,6 +37,7 @@ public class SchoolController {
 
     @SneakyThrows
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
     public ResponseEntity<APIResponse<SchoolDTO>> getByID(@PathVariable UUID id) {
         SchoolDTO school = schoolService.getById(id);
         APIResponse<SchoolDTO> response = new APIResponse<>();
@@ -45,6 +48,7 @@ public class SchoolController {
 
     @SneakyThrows
     @PostMapping()
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<SchoolDTO>> createSchool(@RequestBody @Valid SchoolDTO school) {
         school = schoolService.create(school);
         APIResponse<SchoolDTO> response = new APIResponse<>();
@@ -59,6 +63,7 @@ public class SchoolController {
 
     @SneakyThrows
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<SchoolDTO>> updateSchool(@PathVariable UUID id, @RequestBody @Valid SchoolDTO school) {
         school = schoolService.update(id, school);
         APIResponse<SchoolDTO> response = new APIResponse<>();
@@ -70,6 +75,7 @@ public class SchoolController {
 
     @SneakyThrows
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<String>> deleteSchool(@PathVariable UUID id) {
         schoolService.delete(id);
         APIResponse<String> response = new APIResponse<>();

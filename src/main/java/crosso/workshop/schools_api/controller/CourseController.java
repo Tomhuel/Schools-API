@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,6 +25,7 @@ public class CourseController {
     private final URIFactory uriFactory;
 
     @GetMapping()
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<List<CourseDTO>>> getAllCourses() {
         List<CourseDTO> courses = courseService.getAll();
         APIResponse<List<CourseDTO>> response = new APIResponse<>();
@@ -35,6 +37,7 @@ public class CourseController {
 
     @SneakyThrows
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
     public ResponseEntity<APIResponse<CourseDTO>> getCourse(@PathVariable UUID id) {
         CourseDTO course = courseService.getById(id);
         APIResponse<CourseDTO> response = new APIResponse<>();
@@ -46,6 +49,7 @@ public class CourseController {
 
     @SneakyThrows
     @PostMapping()
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<CourseDTO>> createCourse(@RequestBody @Valid CourseDTO course) {
         course = courseService.create(course);
         APIResponse<CourseDTO> response = new APIResponse<>();
@@ -59,6 +63,7 @@ public class CourseController {
 
     @SneakyThrows
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<CourseDTO>> updateCourse(@PathVariable UUID id, @RequestBody @Valid CourseDTO course) {
         course = courseService.update(id, course);
         APIResponse<CourseDTO> response = new APIResponse<>();
@@ -70,6 +75,7 @@ public class CourseController {
 
     @SneakyThrows
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<APIResponse<String>> deleteCourse(@PathVariable UUID id) {
         courseService.delete(id);
 

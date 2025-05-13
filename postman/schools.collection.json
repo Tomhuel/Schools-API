@@ -62,7 +62,7 @@
 							"            \"id\": body.id,",
 							"            \"name\": \"Colegio Santa María\",",
 							"            \"startDate\": \"2001-09-11T00:00:00.000+00:00\",",
-							"            \"courses\": []",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"",
@@ -159,7 +159,7 @@
 							"            \"id\": pm.environment.get('SCHOOL_ID'),",
 							"            \"name\": \"Colegio Santa María\",",
 							"            \"startDate\": \"2001-09-11T00:00:00.000+00:00\",",
-							"            \"courses\": []",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -211,7 +211,7 @@
 							"            \"id\": body.id,",
 							"            \"name\": \"Colegio San José del Castillo Negro Explotador\",",
 							"            \"startDate\": \"2003-06-23T12:00:00.000+00:00\",",
-							"            \"courses\": []",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -272,7 +272,7 @@
 							"            \"id\": pm.environment.get('SCHOOL_ID'),",
 							"            \"name\": \"Colegio San José del Castillo Negro Explotador\",",
 							"            \"startDate\": \"2003-06-23T12:00:00.000+00:00\",",
-							"            \"courses\": []",
+							"            \"courses\": null",
 							"        }",
 							"    );",
 							"    pm.expect(res.timestamp).to.be.not.empty;",
@@ -429,6 +429,43 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "username",
+				"value": "John",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "Doe123",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
