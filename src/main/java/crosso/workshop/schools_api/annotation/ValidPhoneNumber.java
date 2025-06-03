@@ -16,7 +16,7 @@ import java.lang.annotation.*;
 @NotNull
 @ReportAsSingleViolation
 public @interface ValidPhoneNumber {
-    String message() default "Teacher's phone must have the correct format";
+    String message() default "Phone must have the correct format";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

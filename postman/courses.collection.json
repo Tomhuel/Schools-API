@@ -7,440 +7,1538 @@
 	},
 	"item": [
 		{
-			"name": "Get All Courses",
-			"event": [
+			"name": "Invalid Requests",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all courses HTTP Status', () => {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test('Get all courses verify body', () => {",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.be.empty;",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Course",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Create course', () => {",
-							"    pm.response.to.have.status(201);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.environment.set('COURSE_ID', body.id);",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": body.id,",
-							"            \"name\": \"Curso de cocina medieval\",",
-							"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
-							"            \"students\": [],",
-							"            \"teacher\": null,",
-							"            \"school\": null,",
-							"            \"code\": \"CCM1\"",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
-							"",
-							"    const location = pm.response.headers.get('Location');",
-							"    pm.expect(location).to.include('/api/v1/courses/');",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"students\": []\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"name": "name",
+					"item": [
+						{
+							"name": "spaces in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.name\" && ",
+											"        err.rejectedValue === \"              COURSE         \" && err.description === \"Course's name cannot contain spaces at the start and the end of the string\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"              COURSE         \",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "empty name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with empty name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.name\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Course's name cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with numbers in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.name\" && ",
+											"        err.rejectedValue === \"12387Course983420\" && err.description === \"Course's name cannot contain any numbers\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"12387Course983420\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special chars in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with special chars in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.name\" && ",
+											"        err.rejectedValue === \"$$course$$\" && err.description === \"Course's name cannot contain special characters\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"$$course$$\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
 						}
-					}
+					]
 				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get All Courses AFTER CREATION",
-			"event": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all courses', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.have.length(1);",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Course",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single course', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": pm.environment.get('COURSE_ID'),",
-							"            \"name\": \"Curso de cocina medieval\",",
-							"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
-							"            \"students\": [],",
-							"            \"teacher\": null,",
-							"            \"school\": null",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses",
-						":id"
-					],
-					"variable": [
+					"name": "code",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{COURSE_ID}}"
+							"name": "invalid course code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with invalid course code', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.code\" && ",
+											"        err.rejectedValue === \"REALLY BAD CODE 982103\" && err.description === \"must match \\\"^[A-Z]{3}\\\\d$\\\"\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso Épico\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"REALLY BAD CODE 982103\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Course",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Update course', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": body.id,",
-							"            \"name\": \"Curso de cocina nórdica\",",
-							"            \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",",
-							"            \"students\": [],",
-							"            \"teacher\": null,",
-							"            \"school\": null,",
-							"            \"code\": \"MCC1\"",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Curso de cocina nórdica\",\n    \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",\n    \"code\": \"MCC1\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
 				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses",
-						":id"
-					],
-					"variable": [
+				{
+					"name": "description",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{COURSE_ID}}"
+							"name": "null description",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with null description', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.description\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Course's description cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso NO Épico\",\n    \"description\": null,\n    \"students\": [],\n    \"teacher\": null,\n    \"school\": null,\n    \"code\": \"LNG2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Course Updated",
-			"event": [
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single course updated', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": pm.environment.get('COURSE_ID'),",
-							"            \"name\": \"Curso de cocina nórdica\",",
-							"            \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",",
-							"            \"students\": [],",
-							"            \"teacher\": null,",
-							"            \"school\": null",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses",
-						":id"
-					],
-					"variable": [
+					"name": "school",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{COURSE_ID}}"
+							"name": "Create Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher', () => {",
+											"    pm.response.to.have.status(201);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.environment.set('TEACHER_ID', body.id);",
+											"    pm.expect(body).to.deep.include(",
+											"        {",
+											"            \"id\": body.id,",
+											"            \"name\": \"Andrés\",",
+											"            \"lastname\": \"García\",",
+											"            \"email\": \"agarcia@gmail.com\",",
+											"            \"phone\": \"644578205\",",
+											"            \"age\": 23,",
+											"            \"address\": \"Calle San Miguel del Teide\",",
+											"            \"courses\": []",
+											"        }",
+											"    );",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const location = pm.response.headers.get('Location');",
+											"    pm.expect(location).to.include('/api/v1/teachers/');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 23,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"courses\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create course with non existent School",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with non existent School', () => {",
+											"    pm.response.to.have.status(404);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"School.id\" && ",
+											"        err.rejectedValue === \"c38d75c4-5e3d-4f43-bcf4-9cbf3a0b3f97\" && err.description === \"Entity School with id c38d75c4-5e3d-4f43-bcf4-9cbf3a0b3f97 not found\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"school\": {\n        \"id\": \"c38d75c4-5e3d-4f43-bcf4-9cbf3a0b3f97\"\n    },\n    \"teacher\": {\n        \"id\": \"{{TEACHER_ID}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create course with null school",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with null School', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.school\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Course's school cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"teacher\": {\n        \"id\": \"{{TEACHER_ID}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Delete teacher', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{TEACHER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DELETE Course",
-			"event": [
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Delete course', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses",
-						":id"
-					],
-					"variable": [
+					"name": "teacher",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{COURSE_ID}}"
+							"name": "Create School",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create school', () => {",
+											"    pm.response.to.have.status(201);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.environment.set('SCHOOL_ID', body.id);",
+											"    pm.expect(body).to.deep.include(",
+											"        {",
+											"            \"id\": body.id,",
+											"            \"name\": \"Colegio Santa María\",",
+											"            \"startDate\": \"2001-09-11T00:00:00.000+00:00\",",
+											"            \"courses\": []",
+											"        }",
+											"    );",
+											"",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const location = pm.response.headers.get('Location');",
+											"    pm.expect(location).to.include('/api/v1/schools/');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Colegio Santa María\",\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"courses\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create course with non existent School Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with non existent School', () => {",
+											"    pm.response.to.have.status(404);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"Teacher.id\" && ",
+											"        err.rejectedValue === \"c38d75c4-5e3d-4f43-bcf4-9cbf3a0b3f97\" && err.description === \"Entity Teacher with id c38d75c4-5e3d-4f43-bcf4-9cbf3a0b3f97 not found\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"teacher\": {\n        \"id\": \"c38d75c4-5e3d-4f43-bcf4-9cbf3a0b3f97\"\n    },\n    \"school\": {\n        \"id\": \"{{SCHOOL_ID}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create course with null teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course with null School', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"courseDetailDTO.teacher\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Course's teacher cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"school\": {\n        \"id\": \"{{SCHOOL_ID}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE SCHOOL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Delete school', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(`/api/v1/schools/${pm.environment.get('SCHOOL_ID')}`);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{SCHOOL_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Course DELETED",
-			"event": [
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single course after delete', () => {",
-							"    pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"courses",
-						":id"
-					],
-					"variable": [
+					"name": "Get All Courses",
+					"event": [
 						{
-							"key": "id",
-							"value": "{{COURSE_ID}}"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all courses HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all courses verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get All Courses AFTER DELETE",
-			"event": [
+			"name": "Valid Requests",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all course after delete', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.be.empty;",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/courses",
-					"host": [
-						"{{BASE_URL}}"
+					"name": "Get All Courses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all courses HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all courses verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
 					],
-					"path": [
-						"api",
-						"v1",
-						"courses"
-					]
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create School",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Create school', () => {",
+									"    pm.response.to.have.status(201);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.environment.set('SCHOOL_ID', body.id);",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Colegio Santa María\",",
+									"            \"startDate\": \"2001-09-11T00:00:00.000+00:00\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+									"",
+									"    const location = pm.response.headers.get('Location');",
+									"    pm.expect(location).to.include('/api/v1/schools/');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Colegio Santa María\",\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"courses\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/schools",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"schools"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Create teacher', () => {",
+									"    pm.response.to.have.status(201);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.environment.set('TEACHER_ID', body.id);",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Andrés\",",
+									"            \"lastname\": \"García\",",
+									"            \"email\": \"agarcia@gmail.com\",",
+									"            \"phone\": \"644578205\",",
+									"            \"age\": 23,",
+									"            \"address\": \"Calle San Miguel del Teide\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+									"",
+									"    const location = pm.response.headers.get('Location');",
+									"    pm.expect(location).to.include('/api/v1/teachers/');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 23,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"students\": null,\n    \"courses\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Create course', () => {",
+									"    pm.response.to.have.status(201);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.environment.set('COURSE_ID', body.id);",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Curso de cocina medieval\",",
+									"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
+									"            \"students\": [],",
+									"            \"school\": {",
+									"                \"id\": pm.environment.get('SCHOOL_ID'),",
+									"                \"name\": \"Colegio Santa María\",",
+									"                \"startDate\": \"2001-09-11T00:00:00.000+00:00\"",
+									"            },",
+									"            \"teacher\": {",
+									"                \"id\": pm.environment.get('TEACHER_ID'),",
+									"                \"name\": \"Andrés\",",
+									"                \"lastname\": \"García\",",
+									"                \"email\": \"agarcia@gmail.com\",",
+									"                \"phone\": \"644578205\",",
+									"                \"age\": 23,",
+									"                \"address\": \"Calle San Miguel del Teide\"",
+									"            },",
+									"            \"code\": \"CCM1\"",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+									"",
+									"    const location = pm.response.headers.get('Location');",
+									"    pm.expect(location).to.include('/api/v1/courses/');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"school\": {\n        \"id\": \"{{SCHOOL_ID}}\"\n    },\n    \"teacher\": {\n        \"id\": \"{{TEACHER_ID}}\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Courses AFTER CREATION",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all courses', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.have.length(1);",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single course', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Curso de cocina medieval\",",
+									"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
+									"            \"students\": [],",
+									"            \"school\": {",
+									"                \"id\": pm.environment.get('SCHOOL_ID'),",
+									"                \"name\": \"Colegio Santa María\",",
+									"                \"startDate\": \"2001-09-11T00:00:00.000+00:00\"",
+									"            },",
+									"            \"teacher\": {",
+									"                \"id\": pm.environment.get('TEACHER_ID'),",
+									"                \"name\": \"Andrés\",",
+									"                \"lastname\": \"García\",",
+									"                \"email\": \"agarcia@gmail.com\",",
+									"                \"phone\": \"644578205\",",
+									"                \"age\": 23,",
+									"                \"address\": \"Calle San Miguel del Teide\"",
+									"            },",
+									"            \"code\": \"CCM1\"",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{COURSE_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Update course', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Curso de cocina nórdica\",",
+									"            \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",",
+									"            \"students\": [],",
+									"            \"school\": {",
+									"                \"id\": pm.environment.get('SCHOOL_ID'),",
+									"                \"name\": \"Colegio Santa María\",",
+									"                \"startDate\": \"2001-09-11T00:00:00.000+00:00\"",
+									"            },",
+									"            \"teacher\": {",
+									"                \"id\": pm.environment.get('TEACHER_ID'),",
+									"                \"name\": \"Andrés\",",
+									"                \"lastname\": \"García\",",
+									"                \"email\": \"agarcia@gmail.com\",",
+									"                \"phone\": \"644578205\",",
+									"                \"age\": 23,",
+									"                \"address\": \"Calle San Miguel del Teide\"",
+									"            },",
+									"            \"code\": \"MCC1\"",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Curso de cocina nórdica\",\n    \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",\n    \"school\": {\n        \"id\": \"{{SCHOOL_ID}}\"\n    },\n    \"teacher\": {\n        \"id\": \"{{TEACHER_ID}}\"\n    },\n    \"code\": \"MCC1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{COURSE_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single course updated', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Curso de cocina nórdica\",",
+									"            \"description\": \"Formación para aprender a cocinar como auténticos guerreros de la época nórdica.\",",
+									"            \"students\": [],",
+									"            \"school\": {",
+									"                \"id\": pm.environment.get('SCHOOL_ID'),",
+									"                \"name\": \"Colegio Santa María\",",
+									"                \"startDate\": \"2001-09-11T00:00:00.000+00:00\"",
+									"            },",
+									"            \"teacher\": {",
+									"                \"id\": pm.environment.get('TEACHER_ID'),",
+									"                \"name\": \"Andrés\",",
+									"                \"lastname\": \"García\",",
+									"                \"email\": \"agarcia@gmail.com\",",
+									"                \"phone\": \"644578205\",",
+									"                \"age\": 23,",
+									"                \"address\": \"Calle San Miguel del Teide\"",
+									"            },",
+									"            \"code\": \"MCC1\"",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{COURSE_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Delete course', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{COURSE_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Delete teacher', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{TEACHER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE SCHOOL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Delete school', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/schools/${pm.environment.get('SCHOOL_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/schools/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"schools",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{SCHOOL_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course DELETED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single course after delete', () => {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{COURSE_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Courses AFTER DELETE",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all course after delete', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"courses"
+							]
+						}
+					},
+					"response": []
 				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "Doe123",
+				"type": "string"
 			},
-			"response": []
+			{
+				"key": "username",
+				"value": "John",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

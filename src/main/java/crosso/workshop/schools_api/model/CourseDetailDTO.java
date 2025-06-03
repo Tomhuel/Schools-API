@@ -1,9 +1,14 @@
 package crosso.workshop.schools_api.model;
 
-import crosso.workshop.schools_api.annotation.*;
-import jakarta.validation.constraints.*;
+import crosso.workshop.schools_api.annotation.NotContainNumbers;
+import crosso.workshop.schools_api.annotation.NotContainSpecialCharacters;
+import crosso.workshop.schools_api.annotation.Trimmed;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -11,7 +16,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CourseDTO {
+public class CourseDetailDTO {
 
     private UUID id;
 
@@ -29,10 +34,12 @@ public class CourseDTO {
     @Pattern(regexp = "^[A-Z]{3}\\d$")
     private String code;
 
-    private SchoolDTO school;
+    @NotNull(message = "Course's school cannot be null")
+    private SchoolReducedDTO school;
 
-    private TeacherDTO teacher;
+    @NotNull(message = "Course's teacher cannot be null")
+    private TeacherReducedDTO teacher;
 
-    private Set<StudentDTO> students;
+    private Set<StudentReducedDTO> students = new HashSet<>();
 
 }

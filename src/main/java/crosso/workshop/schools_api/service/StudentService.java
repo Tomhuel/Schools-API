@@ -2,12 +2,14 @@ package crosso.workshop.schools_api.service;
 
 import crosso.workshop.schools_api.entity.StudentEntity;
 import crosso.workshop.schools_api.exception.EntityNotFoundException;
-import crosso.workshop.schools_api.model.StudentDTO;
+import crosso.workshop.schools_api.model.StudentDetailDTO;
+import crosso.workshop.schools_api.model.StudentReducedDTO;
 import crosso.workshop.schools_api.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,32 +20,40 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final ModelMapper mapper;
 
-    public List<StudentDTO> getAll() {
+    public List<StudentReducedDTO> getAll() {
         List<StudentEntity> students = studentRepository.findAll();
-        return students.stream().map(s -> mapper.map(s, StudentDTO.class)).toList();
+        return students.stream().map(s -> mapper.map(s, StudentReducedDTO.class)).toList();
     }
 
-    public StudentDTO getById(UUID id) throws EntityNotFoundException {
-        StudentEntity student = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Student", id.toString()));
-        return mapper.map(student, StudentDTO.class);
+    public StudentDetailDTO getById(UUID id) throws EntityNotFoundException {
+        return mapper.map(getEntityById(id), StudentDetailDTO.class);
     }
 
-    public StudentDTO create(StudentDTO student) {
+    public StudentEntity getEntityById(UUID id) throws EntityNotFoundException {
+        return studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Student", id.toString()));
+    }
+
+    public StudentDetailDTO create(StudentDetailDTO student) {
         StudentEntity studentEntity = mapper.map(student, StudentEntity.class);
         studentEntity = studentRepository.save(studentEntity);
-        return mapper.map(studentEntity, StudentDTO.class);
+
+        if (studentEntity.getCourses() == null) {
+            studentEntity.setCourses(new HashSet<>());
+        }
+
+        return mapper.map(studentEntity, StudentDetailDTO.class);
     }
 
-    public StudentDTO update(UUID id, StudentDTO student) throws EntityNotFoundException {
+    public StudentDetailDTO update(UUID id, StudentDetailDTO student) throws EntityNotFoundException {
         if (!studentRepository.existsById(id)) throw new EntityNotFoundException("Course", id.toString());
         student.setId(id);
         StudentEntity studentEntity = mapper.map(student, StudentEntity.class);
         studentEntity = studentRepository.save(studentEntity);
-        return mapper.map(studentEntity, StudentDTO.class);
+        return mapper.map(studentEntity, StudentDetailDTO.class);
     }
 
     public void delete(UUID id) throws EntityNotFoundException {
-        StudentDTO student = this.getById(id);
+        StudentDetailDTO student = this.getById(id);
         studentRepository.delete(mapper.map(student, StudentEntity.class));
     }
 }

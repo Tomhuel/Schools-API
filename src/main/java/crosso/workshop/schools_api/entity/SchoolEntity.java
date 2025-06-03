@@ -13,7 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SchoolEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -21,6 +20,18 @@ public class SchoolEntity {
     private String name;
     private Date startDate;
 
-    @OneToMany(mappedBy = "school", cascade = CascadeType.REMOVE)
-    private Set<CourseEntity> course;
+    @OneToMany(mappedBy = "school", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private Set<CourseEntity> courses;
+
+    public Set<CourseEntity> addCourse(CourseEntity course) {
+        this.courses.add(course);
+        course.setSchool(this);
+        return this.courses;
+    }
+
+    public Set<CourseEntity> removeCourse(CourseEntity course) {
+        this.courses.remove(course);
+        course.setSchool(null);
+        return this.courses;
+    }
 }

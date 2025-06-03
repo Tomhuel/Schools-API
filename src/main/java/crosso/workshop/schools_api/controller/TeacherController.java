@@ -1,6 +1,8 @@
 package crosso.workshop.schools_api.controller;
 
-import crosso.workshop.schools_api.model.TeacherDTO;
+import crosso.workshop.schools_api.model.StudentDetailDTO;
+import crosso.workshop.schools_api.model.TeacherDetailDTO;
+import crosso.workshop.schools_api.model.TeacherReducedDTO;
 import crosso.workshop.schools_api.service.TeacherService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import crosso.workshop.schools_api.utils.response.headers.URIFactory;
@@ -24,9 +26,9 @@ public class TeacherController {
     private final URIFactory uriFactory;
 
     @GetMapping()
-    public ResponseEntity<APIResponse<List<TeacherDTO>>> getAllTeacher() {
-        List<TeacherDTO> teacherEntities = teacherService.getAll();
-        APIResponse<List<TeacherDTO>> response = new APIResponse<>();
+    public ResponseEntity<APIResponse<List<TeacherReducedDTO>>> getAllTeacher() {
+        List<TeacherReducedDTO> teacherEntities = teacherService.getAll();
+        APIResponse<List<TeacherReducedDTO>> response = new APIResponse<>();
 
         response.setBody(teacherEntities);
         response.setUri(httpServletRequest.getRequestURI());
@@ -34,11 +36,22 @@ public class TeacherController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}/students")
+    public ResponseEntity<APIResponse<List<StudentDetailDTO>>> getTeacherStudents(@PathVariable UUID id) {
+        List<StudentDetailDTO> students = teacherService.getStudentsByTeacherId(id);
+        APIResponse<List<StudentDetailDTO>> response = new APIResponse<>();
+
+        response.setBody(students);
+        response.setUri(httpServletRequest.getRequestURI());
+
+        return ResponseEntity.ok(response);
+    }
+
     @SneakyThrows
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<TeacherDTO>> getTeacher(@PathVariable UUID id) {
-        TeacherDTO teacher = teacherService.getById(id);
-        APIResponse<TeacherDTO> response = new APIResponse<>();
+    public ResponseEntity<APIResponse<TeacherDetailDTO>> getTeacher(@PathVariable UUID id) {
+        TeacherDetailDTO teacher = teacherService.getById(id);
+        APIResponse<TeacherDetailDTO> response = new APIResponse<>();
 
         response.setBody(teacher);
         response.setUri(httpServletRequest.getRequestURI());
@@ -48,9 +61,9 @@ public class TeacherController {
 
     @SneakyThrows
     @PostMapping()
-    public ResponseEntity<APIResponse<TeacherDTO>> createTeacher(@RequestBody @Valid TeacherDTO teacher) {
+    public ResponseEntity<APIResponse<TeacherDetailDTO>> createTeacher(@RequestBody @Valid TeacherDetailDTO teacher) {
         teacher = teacherService.create(teacher);
-        APIResponse<TeacherDTO> response = new APIResponse<>();
+        APIResponse<TeacherDetailDTO> response = new APIResponse<>();
 
         URI location = uriFactory.buildFromCurrentRequestWithUuid(teacher.getId());
 
@@ -62,9 +75,9 @@ public class TeacherController {
 
     @SneakyThrows
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<TeacherDTO>> updateTeacher(@PathVariable UUID id, @RequestBody @Valid TeacherDTO teacher) {
+    public ResponseEntity<APIResponse<TeacherDetailDTO>> updateTeacher(@PathVariable UUID id, @RequestBody @Valid TeacherDetailDTO teacher) {
         teacher = teacherService.update(id, teacher);
-        APIResponse<TeacherDTO> response = new APIResponse<>();
+        APIResponse<TeacherDetailDTO> response = new APIResponse<>();
 
         response.setUri(httpServletRequest.getRequestURI());
         response.setBody(teacher);

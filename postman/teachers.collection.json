@@ -7,450 +7,1657 @@
 	},
 	"item": [
 		{
-			"name": "Get All Teachers",
-			"event": [
+			"name": "Invalid Requests",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all teachers HTTP Status', () => {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test('Get all teachers verify body', () => {",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.be.empty;",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Teacher",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Create teacher', () => {",
-							"    pm.response.to.have.status(201);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.environment.set('TEACHER_ID', body.id);",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": body.id,",
-							"            \"name\": \"Andrés\",",
-							"            \"lastname\": \"García\",",
-							"            \"email\": \"agarcia@gmail.com\",",
-							"            \"phone\": \"644578205\",",
-							"            \"age\": 23,",
-							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
-							"",
-							"    const location = pm.response.headers.get('Location');",
-							"    pm.expect(location).to.include('/api/v1/teachers/');",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 23,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"students\": [],\n    \"courses\": []\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"name": "name",
+					"item": [
+						{
+							"name": "trim spaces in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.name\" && ",
+											"        err.rejectedValue === \"   Profe    NPC   \" && err.description === \"Teacher's name cannot contain separation characters around the content\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"   Profe    NPC   \",\n    \"lastname\": \"NPC\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with numbers in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.name\" && ",
+											"        err.rejectedValue === \"1Teacher2913821340\" && err.description === \"Teacher's name cannot contain any number\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"1Teacher2913821340\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special characters in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with special characters in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.name\" && ",
+											"        err.rejectedValue === \"T€ACH€RRR\" && err.description === \"Teacher's name cannot contain any special character\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"T€ACH€RRR\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
 						}
-					}
+					]
 				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get All Teachers AFTER CREATION",
-			"event": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all teachers', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.have.length(1);",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Teacher",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single teacher', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": pm.environment.get('TEACHER_ID'),",
-							"            \"name\": \"Andrés\",",
-							"            \"lastname\": \"García\",",
-							"            \"email\": \"agarcia@gmail.com\",",
-							"            \"phone\": \"644578205\",",
-							"            \"age\": 23,",
-							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						":id"
-					],
-					"variable": [
+					"name": "lastname",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{TEACHER_ID}}"
+							"name": "trim spaces in lastname",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.lastname\" && ",
+											"        err.rejectedValue === \" NP    C \" && err.description === \"Teacher's lastname cannot contain separation characters around the content\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \" NP    C \",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in lastname",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with numbers in lastname', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.lastname\" && ",
+											"        err.rejectedValue === \"1283714\" && err.description === \"Teacher's lastname cannot contain any number\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"1283714\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special characters in lastname",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with special characters in lastname', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.lastname\" && ",
+											"        err.rejectedValue === \"NPC$$$\" && err.description === \"Teacher's lastname cannot contain any special character\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC$$$\",\n    \"address\": \"Home\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Teacher",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Update teacher', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": body.id,",
-							"            \"name\": \"Andrés\",",
-							"            \"lastname\": \"García\",",
-							"            \"email\": \"agarcia@gmail.com\",",
-							"            \"phone\": \"644578205\",",
-							"            \"age\": 25,",
-							"            \"address\": \"Calle Santiago del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 25,\n    \"address\": \"Calle Santiago del Teide\",\n    \"students\": [],\n    \"courses\": []\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
 				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						":id"
-					],
-					"variable": [
+				{
+					"name": "address",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{TEACHER_ID}}"
+							"name": "empty address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with empty address', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.address\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Teacher's address cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"\",\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with null address', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.address\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's address cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": null,\n    \"age\": 24,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Teacher Updated",
-			"event": [
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single teacher updated', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": pm.environment.get('TEACHER_ID'),",
-							"            \"name\": \"Andrés\",",
-							"            \"lastname\": \"García\",",
-							"            \"email\": \"agarcia@gmail.com\",",
-							"            \"phone\": \"644578205\",",
-							"            \"age\": 25,",
-							"            \"address\": \"Calle Santiago del Teide\",",
-							"            \"students\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						":id"
-					],
-					"variable": [
+					"name": "age",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{TEACHER_ID}}"
+							"name": "null age",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with null age', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.age\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's age cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": null,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too young",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with younger age', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.age\" && ",
+											"        err.rejectedValue === \"16\" && err.description === \"Teacher's age must be greater or equal 23\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 16,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too old",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with older age', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.age\" && ",
+											"        err.rejectedValue === \"80\" && err.description === \"Teacher's age must be lower or equal 73\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 80,\n    \"phone\": \"683902131\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "DELETE Teacher",
-			"event": [
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Delete teacher', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						":id"
-					],
-					"variable": [
+					"name": "phone",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{TEACHER_ID}}"
+							"name": "null phone",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with null phone', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.phone\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's phone number cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 50,\n    \"phone\": null,\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "empty phone",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with empty phone', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.phone\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Teacher's phone number cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid phone",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with wrong phone number', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.phone\" && ",
+											"        err.rejectedValue === \"HELLO57831241\" && err.description === \"Teacher's phone must have the correct format\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"HELLO57831241\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid phone 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with wrong phone number', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.phone\" && ",
+											"        err.rejectedValue === \"myohonenumber\" && err.description === \"Teacher's phone must have the correct format\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"myohonenumber\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid phone 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with wrong phone number', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.phone\" && ",
+											"        err.rejectedValue === \"479832174831284723894732482347239487238432\" && err.description === \"Teacher's phone must have the correct format\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"479832174831284723894732482347239487238432\",\n    \"email\": \"profe@email.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Teacher DELETED",
-			"event": [
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single teacher after delete', () => {",
-							"    pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						":id"
-					],
-					"variable": [
+					"name": "email",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{TEACHER_ID}}"
+							"name": "empty email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with empty email', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.email\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Teacher's email cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with null email', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.email\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Teacher's email cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid email 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with wrong email', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.email\" && ",
+											"        err.rejectedValue === \"email dot com\" && err.description === \"Teacher's email must have the correct format: {user}@{domain}.{tld}\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"email dot com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid email 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with wrong email', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.email\" && ",
+											"        err.rejectedValue === \"pacoemail.com@\" && err.description === \"Teacher's email must have the correct format: {user}@{domain}.{tld}\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"pacoemail.com@\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid email 3",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher with wrong email', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"teacherDetailDTO.email\" && ",
+											"        err.rejectedValue === \"paco.perez@emailcom\" && err.description === \"Teacher's email must have the correct format: {user}@{domain}.{tld}\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Teacher\",\n    \"lastname\": \"NPC\",\n    \"address\": \"Address\",\n    \"age\": 40,\n    \"phone\": \"471983217\",\n    \"email\": \"paco.perez@emailcom\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
 						}
 					]
+				},
+				{
+					"name": "Get All Teachers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all teachers HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all teachers verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get All Teachers AFTER DELETE",
-			"event": [
+			"name": "Valid Requests",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all teacher after delete', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.be.empty;",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/teachers",
-					"host": [
-						"{{BASE_URL}}"
+					"name": "Get All Teachers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all teachers HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all teachers verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
 					],
-					"path": [
-						"api",
-						"v1",
-						"teachers"
-					]
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Create teacher', () => {",
+									"    pm.response.to.have.status(201);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.environment.set('TEACHER_ID', body.id);",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Andrés\",",
+									"            \"lastname\": \"García\",",
+									"            \"email\": \"agarcia@gmail.com\",",
+									"            \"phone\": \"644578205\",",
+									"            \"age\": 23,",
+									"            \"address\": \"Calle San Miguel del Teide\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+									"",
+									"    const location = pm.response.headers.get('Location');",
+									"    pm.expect(location).to.include('/api/v1/teachers/');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 23,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"courses\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Teachers AFTER CREATION",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all teachers', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.have.length(1);",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single teacher', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": pm.environment.get('TEACHER_ID'),",
+									"            \"name\": \"Andrés\",",
+									"            \"lastname\": \"García\",",
+									"            \"email\": \"agarcia@gmail.com\",",
+									"            \"phone\": \"644578205\",",
+									"            \"age\": 23,",
+									"            \"address\": \"Calle San Miguel del Teide\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{TEACHER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Update teacher', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Andrés\",",
+									"            \"lastname\": \"García\",",
+									"            \"email\": \"agarcia@gmail.com\",",
+									"            \"phone\": \"644578205\",",
+									"            \"age\": 25,",
+									"            \"address\": \"Calle Santiago del Teide\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 25,\n    \"address\": \"Calle Santiago del Teide\",\n    \"courses\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{TEACHER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single teacher updated', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": pm.environment.get('TEACHER_ID'),",
+									"            \"name\": \"Andrés\",",
+									"            \"lastname\": \"García\",",
+									"            \"email\": \"agarcia@gmail.com\",",
+									"            \"phone\": \"644578205\",",
+									"            \"age\": 25,",
+									"            \"address\": \"Calle Santiago del Teide\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{TEACHER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Teacher",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Delete teacher', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{TEACHER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher DELETED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single teacher after delete', () => {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{TEACHER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Teachers AFTER DELETE",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all teacher after delete', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/teachers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
 				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "Doe123",
+				"type": "string"
 			},
-			"response": []
+			{
+				"key": "username",
+				"value": "John",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

@@ -1,6 +1,7 @@
 package crosso.workshop.schools_api.controller;
 
-import crosso.workshop.schools_api.model.StudentDTO;
+import crosso.workshop.schools_api.model.StudentDetailDTO;
+import crosso.workshop.schools_api.model.StudentReducedDTO;
 import crosso.workshop.schools_api.service.StudentService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import crosso.workshop.schools_api.utils.response.headers.URIFactory;
@@ -24,10 +25,10 @@ public class StudentController {
     private final URIFactory uriFactory;
 
     @GetMapping()
-    public ResponseEntity<APIResponse<List<StudentDTO>>> getAllStudents() {
-        List<StudentDTO> students = studentService.getAll();
+    public ResponseEntity<APIResponse<List<StudentReducedDTO>>> getAllStudents() {
+        List<StudentReducedDTO> students = studentService.getAll();
 
-        APIResponse<List<StudentDTO>> response = new APIResponse<>();
+        APIResponse<List<StudentReducedDTO>> response = new APIResponse<>();
         response.setBody(students);
         response.setUri(httpServletRequest.getRequestURI());
 
@@ -36,10 +37,10 @@ public class StudentController {
 
     @SneakyThrows
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<StudentDTO>> getStudent(@PathVariable UUID id) {
-        StudentDTO student = studentService.getById(id);
+    public ResponseEntity<APIResponse<StudentDetailDTO>> getStudent(@PathVariable UUID id) {
+        StudentDetailDTO student = studentService.getById(id);
 
-        APIResponse<StudentDTO> response = new APIResponse<>();
+        APIResponse<StudentDetailDTO> response = new APIResponse<>();
         response.setBody(student);
         response.setUri(httpServletRequest.getRequestURI());
 
@@ -48,10 +49,10 @@ public class StudentController {
 
     @SneakyThrows
     @PostMapping
-    public ResponseEntity<APIResponse<StudentDTO>> createStudent(@RequestBody @Valid StudentDTO student) {
+    public ResponseEntity<APIResponse<StudentDetailDTO>> createStudent(@RequestBody @Valid StudentDetailDTO student) {
         student = studentService.create(student);
 
-        APIResponse<StudentDTO> response = new APIResponse<>();
+        APIResponse<StudentDetailDTO> response = new APIResponse<>();
         response.setUri(httpServletRequest.getRequestURI());
         response.setBody(student);
 
@@ -62,9 +63,9 @@ public class StudentController {
 
     @SneakyThrows
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<StudentDTO>> updateStudent(@PathVariable UUID id, @RequestBody @Valid StudentDTO student) {
+    public ResponseEntity<APIResponse<StudentDetailDTO>> updateStudent(@PathVariable UUID id, @RequestBody @Valid StudentDetailDTO student) {
         student = studentService.update(id, student);
-        APIResponse<StudentDTO> response = new APIResponse<>();
+        APIResponse<StudentDetailDTO> response = new APIResponse<>();
 
         response.setBody(student);
         response.setUri(httpServletRequest.getRequestURI());

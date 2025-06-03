@@ -18,7 +18,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> entityNotFound(EntityNotFoundException exception, HttpServletRequest httpServletRequest) {
         ErrorResponse error = new ErrorResponse();
-        error.setErrors(Collections.singletonList(new ErrorField(exception.getMessage(), exception.getError(), exception.getIdNotFound())));
+        error.setErrors(Collections.singletonList(new ErrorField(exception.getError(), exception.getMessage(), exception.getIdNotFound())));
         error.setUri(httpServletRequest.getRequestURI());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }

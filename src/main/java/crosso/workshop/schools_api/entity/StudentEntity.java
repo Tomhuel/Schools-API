@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "students")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,9 +21,18 @@ public class StudentEntity {
     private Integer age;
     private String address;
 
-    @ManyToMany
-    private Set<CourseEntity> course;
+    @ManyToMany(mappedBy = "students")
+    private Set<CourseEntity> courses;
 
-    @ManyToMany
-    private Set<TeacherEntity> teacherEntities;
+    public Set<CourseEntity> addCourse(CourseEntity course) {
+        this.courses.add(course);
+        course.getStudents().add(this);
+        return this.courses;
+    }
+
+    public Set<CourseEntity> removeCourse(CourseEntity course) {
+        this.courses.remove(course);
+        course.getStudents().remove(this);
+        return this.courses;
+    }
 }

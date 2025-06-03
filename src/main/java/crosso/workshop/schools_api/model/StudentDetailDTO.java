@@ -6,6 +6,7 @@ import crosso.workshop.schools_api.annotation.NotContainSpecialCharacters;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentDTO {
+public class StudentDetailDTO {
 
     private UUID id;
 
@@ -33,7 +34,7 @@ public class StudentDTO {
     @NotBlank(message = "Student's address cannot be blank")
     private String address;
 
-    private Set<CourseDTO> courses;
+    private Set<CourseDetailDTO> courses = new HashSet<>();
 
-    private Set<TeacherDTO> teachers;
+    private Set<TeacherDetailDTO> teachers = new HashSet<>();
 }

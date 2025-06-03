@@ -7,438 +7,954 @@
 	},
 	"item": [
 		{
-			"name": "Get All Students",
-			"event": [
+			"name": "Invalid Requests",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all students HTTP Status', () => {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test('Get all students verify body', () => {",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.be.empty;",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Student",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Create student', () => {",
-							"    pm.response.to.have.status(201);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.environment.set('STUDENT_ID', body.id);",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": body.id,",
-							"            \"name\": \"Juanjo\",",
-							"            \"age\": 12,",
-							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
-							"",
-							"    const location = pm.response.headers.get('Location');",
-							"    pm.expect(location).to.include('/api/v1/students/');",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Juanjo\",\n    \"age\": 12,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"teachers\": [],\n    \"courses\": []\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"name": "name",
+					"item": [
+						{
+							"name": "trim spaces in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with invalid spaces', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.name\" && ",
+											"        err.rejectedValue === \"   Niño    NPC   \" && err.description === \"Student's name cannot contain any space character at the end and the start of the string\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"   Niño    NPC   \",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "numbers in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with numbers in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.name\" && ",
+											"        err.rejectedValue === \"NiñoNPC28139013\" && err.description === \"Student's name cannot contain any number\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC28139013\",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "special characters in name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with special characters in name', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.name\" && ",
+											"        err.rejectedValue === \"N,i.ñoNPC$$$$\" && err.description === \"Student's name cannot contain any special character\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"N,i.ñoNPC$$$$\",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
 						}
-					}
+					]
 				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get All Students AFTER CREATION",
-			"event": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all students', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.have.length(1);",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Student",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single student', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": pm.environment.get('STUDENT_ID'),",
-							"            \"name\": \"Juanjo\",",
-							"            \"age\": 12,",
-							"            \"address\": \"Calle San Miguel del Teide\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students",
-						":id"
-					],
-					"variable": [
+					"name": "address",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{STUDENT_ID}}"
+							"name": "empty address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with empty address', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.address\" && ",
+											"        err.rejectedValue === \"\" && err.description === \"Student's address cannot be blank\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"\",\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "null address",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with null address', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.address\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Student's address cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": null,\n    \"age\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Student",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Update student', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": body.id,",
-							"            \"name\": \"Juan Miguel\",",
-							"            \"age\": 13,",
-							"            \"address\": \"Calle San Miguel del Chinyero\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Juan Miguel\",\n    \"age\": 13,\n    \"address\": \"Calle San Miguel del Chinyero\",\n    \"teachers\": [],\n    \"courses\": []\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
 				},
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students",
-						":id"
-					],
-					"variable": [
+				{
+					"name": "age",
+					"item": [
 						{
-							"key": "id",
-							"value": "{{STUDENT_ID}}"
+							"name": "null age",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with null age', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.age\" && ",
+											"        err.rejectedValue === \"null\" && err.description === \"Student's age cannot be null\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"Casa loca\",\n    \"age\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too young",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student younger age', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.age\" && ",
+											"        err.rejectedValue === \"2\" && err.description === \"Student's age must be greater or equal 3\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"Casa loca\",\n    \"age\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "too old",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create student with older age', () => {",
+											"    pm.response.to.have.status(400);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.errors).to.be.an(\"array\").that.is.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+											"",
+											"    const hasExpectedError = res.errors.some(err => {",
+											"        return err.causedBy === \"studentDetailDTO.age\" && ",
+											"        err.rejectedValue === \"13\" && err.description === \"Student's age must be lower or equal 12\";",
+											"    });",
+											"",
+											"    pm.expect(hasExpectedError).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"NiñoNPC\",\n    \"address\": \"Casa loca\",\n    \"age\": 13\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/students",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"students"
+									]
+								}
+							},
+							"response": []
 						}
 					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Student Updated",
-			"event": [
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single student updated', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.deep.include(",
-							"        {",
-							"            \"id\": pm.environment.get('STUDENT_ID'),",
-							"            \"name\": \"Juan Miguel\",",
-							"            \"age\": 13,",
-							"            \"address\": \"Calle San Miguel del Chinyero\",",
-							"            \"teachers\": [],",
-							"            \"courses\": []",
-							"        }",
-							"    );",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students",
-						":id"
-					],
-					"variable": [
+					"name": "Get All Students",
+					"event": [
 						{
-							"key": "id",
-							"value": "{{STUDENT_ID}}"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all students HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all students verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "DELETE Student",
-			"event": [
+			"name": "Valid Requests",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Delete student', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students",
-						":id"
-					],
-					"variable": [
+					"name": "Get All Students",
+					"event": [
 						{
-							"key": "id",
-							"value": "{{STUDENT_ID}}"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all students HTTP Status', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get all students verify body', () => {",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Student DELETED",
-			"event": [
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get single student after delete', () => {",
-							"    pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students/:id",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students",
-						":id"
-					],
-					"variable": [
+					"name": "Create Student",
+					"event": [
 						{
-							"key": "id",
-							"value": "{{STUDENT_ID}}"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Create student', () => {",
+									"    pm.response.to.have.status(201);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.environment.set('STUDENT_ID', body.id);",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Juanjo\",",
+									"            \"age\": 12,",
+									"            \"address\": \"Calle San Miguel del Teide\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+									"",
+									"    const location = pm.response.headers.get('Location');",
+									"    pm.expect(location).to.include('/api/v1/students/');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Juanjo\",\n    \"age\": 12,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"courses\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Students AFTER CREATION",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all students', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.have.length(1);",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single student', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": pm.environment.get('STUDENT_ID'),",
+									"            \"name\": \"Juanjo\",",
+									"            \"age\": 12,",
+									"            \"address\": \"Calle San Miguel del Teide\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{STUDENT_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Update student', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": body.id,",
+									"            \"name\": \"Juan Miguel\",",
+									"            \"age\": 11,",
+									"            \"address\": \"Calle San Miguel del Chinyero\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Juan Miguel\",\n    \"age\": 11,\n    \"address\": \"Calle San Miguel del Chinyero\",\n    \"courses\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{STUDENT_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single student updated', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.deep.include(",
+									"        {",
+									"            \"id\": pm.environment.get('STUDENT_ID'),",
+									"            \"name\": \"Juan Miguel\",",
+									"            \"age\": 11,",
+									"            \"address\": \"Calle San Miguel del Chinyero\",",
+									"            \"courses\": []",
+									"        }",
+									"    );",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{STUDENT_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Delete student', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(`/api/v1/students/${pm.environment.get('STUDENT_ID')}`);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{STUDENT_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student DELETED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get single student after delete', () => {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{STUDENT_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Students AFTER DELETE",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all students after delete', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const res = pm.response.json();",
+									"    const body = res.body;",
+									"    pm.expect(body).to.be.an(\"array\");",
+									"    pm.expect(body).to.be.empty;",
+									"    pm.expect(res.timestamp).to.be.not.empty;",
+									"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/v1/students",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"students"
+							]
+						}
+					},
+					"response": []
 				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "Doe123",
+				"type": "string"
 			},
-			"response": []
+			{
+				"key": "username",
+				"value": "MiniJohn",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		},
 		{
-			"name": "Get All Students AFTER DELETE",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Get all students after delete', () => {",
-							"    pm.response.to.have.status(200);",
-							"    const res = pm.response.json();",
-							"    const body = res.body;",
-							"    pm.expect(body).to.be.an(\"array\");",
-							"    pm.expect(body).to.be.empty;",
-							"    pm.expect(res.timestamp).to.be.not.empty;",
-							"    pm.expect(res.uri).to.be.eq(\"/api/v1/students\");",
-							"});"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/api/v1/students",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"students"
-					]
-				}
-			},
-			"response": []
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

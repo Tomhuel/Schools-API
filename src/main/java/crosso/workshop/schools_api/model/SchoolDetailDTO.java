@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SchoolDTO {
+public class SchoolDetailDTO {
     private UUID id;
 
     @NotNull(message = "School's name cannot be null")
@@ -27,5 +28,5 @@ public class SchoolDTO {
     @NotFutureDate(message = "School's start date cannot be from the future")
     private Date startDate;
 
-    private Set<CourseDTO> courses;
+    private Set<CourseReducedDTO> courses = new HashSet<>();
 }

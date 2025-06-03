@@ -1,6 +1,7 @@
 package crosso.workshop.schools_api.controller;
 
-import crosso.workshop.schools_api.model.CourseDTO;
+import crosso.workshop.schools_api.model.CourseDetailDTO;
+import crosso.workshop.schools_api.model.CourseReducedDTO;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import crosso.workshop.schools_api.service.CourseService;
 import crosso.workshop.schools_api.utils.response.headers.URIFactory;
@@ -24,9 +25,9 @@ public class CourseController {
     private final URIFactory uriFactory;
 
     @GetMapping()
-    public ResponseEntity<APIResponse<List<CourseDTO>>> getAllCourses() {
-        List<CourseDTO> courses = courseService.getAll();
-        APIResponse<List<CourseDTO>> response = new APIResponse<>();
+    public ResponseEntity<APIResponse<List<CourseReducedDTO>>> getAllCourses() {
+        List<CourseReducedDTO> courses = courseService.getAll();
+        APIResponse<List<CourseReducedDTO>> response = new APIResponse<>();
         response.setBody(courses);
         response.setUri(httpServletRequest.getRequestURI());
 
@@ -35,9 +36,9 @@ public class CourseController {
 
     @SneakyThrows
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<CourseDTO>> getCourse(@PathVariable UUID id) {
-        CourseDTO course = courseService.getById(id);
-        APIResponse<CourseDTO> response = new APIResponse<>();
+    public ResponseEntity<APIResponse<CourseDetailDTO>> getCourse(@PathVariable UUID id) {
+        CourseDetailDTO course = courseService.getById(id);
+        APIResponse<CourseDetailDTO> response = new APIResponse<>();
         response.setBody(course);
         response.setUri(httpServletRequest.getRequestURI());
 
@@ -46,9 +47,9 @@ public class CourseController {
 
     @SneakyThrows
     @PostMapping()
-    public ResponseEntity<APIResponse<CourseDTO>> createCourse(@RequestBody @Valid CourseDTO course) {
+    public ResponseEntity<APIResponse<CourseDetailDTO>> createCourse(@RequestBody @Valid CourseDetailDTO course) {
         course = courseService.create(course);
-        APIResponse<CourseDTO> response = new APIResponse<>();
+        APIResponse<CourseDetailDTO> response = new APIResponse<>();
 
         URI location = uriFactory.buildFromCurrentRequestWithUuid(course.getId());
 
@@ -59,9 +60,9 @@ public class CourseController {
 
     @SneakyThrows
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<CourseDTO>> updateCourse(@PathVariable UUID id, @RequestBody @Valid CourseDTO course) {
+    public ResponseEntity<APIResponse<CourseDetailDTO>> updateCourse(@PathVariable UUID id, @RequestBody @Valid CourseDetailDTO course) {
         course = courseService.update(id, course);
-        APIResponse<CourseDTO> response = new APIResponse<>();
+        APIResponse<CourseDetailDTO> response = new APIResponse<>();
         response.setBody(course);
         response.setUri(httpServletRequest.getRequestURI());
 

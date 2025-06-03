@@ -2,12 +2,14 @@ package crosso.workshop.schools_api.service;
 
 import crosso.workshop.schools_api.entity.SchoolEntity;
 import crosso.workshop.schools_api.exception.EntityNotFoundException;
-import crosso.workshop.schools_api.model.SchoolDTO;
+import crosso.workshop.schools_api.model.SchoolDetailDTO;
+import crosso.workshop.schools_api.model.SchoolReducedDTO;
 import crosso.workshop.schools_api.repository.SchoolRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,32 +20,40 @@ public class SchoolService {
     private final SchoolRepository schoolRepository;
     private final ModelMapper mapper;
 
-    public List<SchoolDTO> getAll() {
+    public List<SchoolReducedDTO> getAll() {
         List<SchoolEntity> schools = schoolRepository.findAll();
-        return schools.stream().map(s -> mapper.map(s, SchoolDTO.class)).toList();
+        return schools.stream().map(s -> mapper.map(s, SchoolReducedDTO.class)).toList();
     }
 
-    public SchoolDTO getById(UUID id) throws EntityNotFoundException {
-        SchoolEntity school = schoolRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("School", id.toString()));
-        return mapper.map(school, SchoolDTO.class);
+    public SchoolDetailDTO getById(UUID id) throws EntityNotFoundException {
+        return mapper.map(getEntityById(id), SchoolDetailDTO.class);
     }
 
-    public SchoolDTO create(SchoolDTO school) {
+    public SchoolEntity getEntityById(UUID id) throws EntityNotFoundException {
+        return schoolRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("School", id.toString()));
+    }
+
+    public SchoolDetailDTO create(SchoolDetailDTO school) {
         SchoolEntity schoolEntity = mapper.map(school, SchoolEntity.class);
         schoolEntity = schoolRepository.save(schoolEntity);
-        return mapper.map(schoolEntity, SchoolDTO.class);
+
+        if (schoolEntity.getCourses() == null) {
+            schoolEntity.setCourses(new HashSet<>());
+        }
+
+        return mapper.map(schoolEntity, SchoolDetailDTO.class);
     }
 
-    public SchoolDTO update(UUID id, SchoolDTO school) throws EntityNotFoundException {
+    public SchoolDetailDTO update(UUID id, SchoolDetailDTO school) throws EntityNotFoundException {
         if (!schoolRepository.existsById(id)) throw new EntityNotFoundException("School", id.toString());
         school.setId(id);
         SchoolEntity schoolEntity = mapper.map(school, SchoolEntity.class);
         schoolEntity = schoolRepository.save(schoolEntity);
-        return mapper.map(schoolEntity, SchoolDTO.class);
+        return mapper.map(schoolEntity, SchoolDetailDTO.class);
     }
 
     public void delete(UUID id) throws EntityNotFoundException {
-        SchoolDTO school = this.getById(id);
+        SchoolDetailDTO school = this.getById(id);
         schoolRepository.delete(mapper.map(school, SchoolEntity.class));
     }
 }

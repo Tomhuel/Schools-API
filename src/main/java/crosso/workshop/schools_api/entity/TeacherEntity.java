@@ -24,9 +24,6 @@ public class TeacherEntity {
     private Integer age;
     private String address;
 
-    @OneToMany(mappedBy = "teacher")
-    private Set<CourseEntity> course;
-
-    @ManyToMany
-    private Set<StudentEntity> studentEntities;
+    @OneToMany(mappedBy = "teacher", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private Set<CourseEntity> courses;
 }
