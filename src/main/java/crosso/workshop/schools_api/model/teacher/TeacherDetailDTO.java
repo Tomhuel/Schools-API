@@ -1,6 +1,7 @@
-package crosso.workshop.schools_api.model;
+package crosso.workshop.schools_api.model.teacher;
 
 import crosso.workshop.schools_api.annotation.*;
+import crosso.workshop.schools_api.model.course.CourseReducedDTO;
 import jakarta.validation.constraints.*;
 import lombok.*;
 

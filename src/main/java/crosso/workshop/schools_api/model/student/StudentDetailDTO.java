@@ -1,8 +1,10 @@
-package crosso.workshop.schools_api.model;
+package crosso.workshop.schools_api.model.student;
 
 import crosso.workshop.schools_api.annotation.*;
 import crosso.workshop.schools_api.annotation.NotContainNumbers;
 import crosso.workshop.schools_api.annotation.NotContainSpecialCharacters;
+import crosso.workshop.schools_api.model.course.CourseDetailDTO;
+import crosso.workshop.schools_api.model.teacher.TeacherDetailDTO;
 import jakarta.validation.constraints.*;
 import lombok.*;
 

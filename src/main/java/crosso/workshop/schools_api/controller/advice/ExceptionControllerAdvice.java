@@ -4,12 +4,14 @@ import crosso.workshop.schools_api.exception.EntityNotFoundException;
 import crosso.workshop.schools_api.utils.response.ErrorResponse;
 import crosso.workshop.schools_api.utils.response.field.ErrorField;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 @ControllerAdvice
@@ -35,6 +37,22 @@ public class ExceptionControllerAdvice {
 
         error.setErrors(errors);
         error.setUri(httpServletRequest.getRequestURI());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ErrorResponse> propertyReferenceError(PropertyReferenceException e, HttpServletRequest httpServletRequest) {
+        ErrorResponse error = new ErrorResponse();
+
+        var errors = new ArrayList<ErrorField>();
+
+        String causedBy = String.format("%s.%s", e.getType().getType().getSimpleName(), e.getPropertyName());
+
+        errors.add(new ErrorField(causedBy, e.getMessage(), e.getPropertyName()));
+
+        error.setUri(httpServletRequest.getRequestURI());
+        error.setErrors(errors);
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

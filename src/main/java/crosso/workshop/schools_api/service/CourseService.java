@@ -4,10 +4,17 @@ import crosso.workshop.schools_api.entity.CourseEntity;
 import crosso.workshop.schools_api.entity.SchoolEntity;
 import crosso.workshop.schools_api.entity.TeacherEntity;
 import crosso.workshop.schools_api.exception.EntityNotFoundException;
-import crosso.workshop.schools_api.model.*;
+import crosso.workshop.schools_api.model.course.CourseDetailDTO;
+import crosso.workshop.schools_api.model.course.CourseReducedDTO;
+import crosso.workshop.schools_api.model.course.CourseSearchDTO;
+import crosso.workshop.schools_api.model.school.SchoolReducedDTO;
+import crosso.workshop.schools_api.model.teacher.TeacherReducedDTO;
 import crosso.workshop.schools_api.repository.CourseRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -33,6 +40,30 @@ public class CourseService {
 
     public CourseEntity getEntityById(UUID id) throws EntityNotFoundException {
         return courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course", id.toString()));
+    }
+
+    public List<CourseReducedDTO> searchCourses(
+            CourseSearchDTO courseSearch,
+            String sortBy,
+            ExampleMatcher.StringMatcher match,
+            Sort.Direction direction
+    ) {
+
+        CourseEntity courseEntity = mapper.map(courseSearch, CourseEntity.class);
+
+        ExampleMatcher matcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreNullValues()
+                .withStringMatcher(match)
+                .withIgnoreCase();
+
+        Example<CourseEntity> example = Example.of(courseEntity, matcher);
+
+        Sort sort = Sort.by(direction, sortBy);
+
+        List<CourseEntity> courses = courseRepository.findAll(example, sort);
+
+        return courses.stream().map(c -> mapper.map(c, CourseReducedDTO.class)).toList();
     }
 
     public CourseDetailDTO create(CourseDetailDTO course) throws EntityNotFoundException {

@@ -1,4 +1,4 @@
-package crosso.workshop.schools_api.model;
+package crosso.workshop.schools_api.model.course;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

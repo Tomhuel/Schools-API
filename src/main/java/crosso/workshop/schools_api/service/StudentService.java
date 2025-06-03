@@ -2,8 +2,8 @@ package crosso.workshop.schools_api.service;
 
 import crosso.workshop.schools_api.entity.StudentEntity;
 import crosso.workshop.schools_api.exception.EntityNotFoundException;
-import crosso.workshop.schools_api.model.StudentDetailDTO;
-import crosso.workshop.schools_api.model.StudentReducedDTO;
+import crosso.workshop.schools_api.model.student.StudentDetailDTO;
+import crosso.workshop.schools_api.model.student.StudentReducedDTO;
 import crosso.workshop.schools_api.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

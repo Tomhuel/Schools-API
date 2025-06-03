@@ -809,6 +809,752 @@
 			"name": "Valid Requests",
 			"item": [
 				{
+					"name": "Search",
+					"item": [
+						{
+							"name": "Create School",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create school', () => {",
+											"    pm.response.to.have.status(201);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.environment.set('SCHOOL_ID', body.id);",
+											"    pm.expect(body).to.deep.include(",
+											"        {",
+											"            \"id\": body.id,",
+											"            \"name\": \"Colegio Santa María\",",
+											"            \"startDate\": \"2001-09-11T00:00:00.000+00:00\",",
+											"            \"courses\": []",
+											"        }",
+											"    );",
+											"",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/schools\");",
+											"",
+											"    const location = pm.response.headers.get('Location');",
+											"    pm.expect(location).to.include('/api/v1/schools/');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Colegio Santa María\",\n    \"startDate\": \"2001-09-11T00:00:00Z\",\n    \"courses\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create teacher', () => {",
+											"    pm.response.to.have.status(201);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.environment.set('TEACHER_ID', body.id);",
+											"    pm.expect(body).to.deep.include(",
+											"        {",
+											"            \"id\": body.id,",
+											"            \"name\": \"Andrés\",",
+											"            \"lastname\": \"García\",",
+											"            \"email\": \"agarcia@gmail.com\",",
+											"            \"phone\": \"644578205\",",
+											"            \"age\": 23,",
+											"            \"address\": \"Calle San Miguel del Teide\",",
+											"            \"courses\": []",
+											"        }",
+											"    );",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/teachers\");",
+											"",
+											"    const location = pm.response.headers.get('Location');",
+											"    pm.expect(location).to.include('/api/v1/teachers/');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Andrés\",\n    \"lastname\": \"García\",\n    \"email\": \"agarcia@gmail.com\",\n    \"phone\": \"644578205\",\n    \"age\": 23,\n    \"address\": \"Calle San Miguel del Teide\",\n    \"students\": null,\n    \"courses\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Course 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(201);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.environment.set('COURSE_ID', body.id);",
+											"    pm.expect(body).to.deep.include(",
+											"        {",
+											"            \"id\": body.id,",
+											"            \"name\": \"Curso de cocina medieval\",",
+											"            \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",",
+											"            \"students\": [],",
+											"            \"school\": {",
+											"                \"id\": pm.environment.get('SCHOOL_ID'),",
+											"                \"name\": \"Colegio Santa María\",",
+											"                \"startDate\": \"2001-09-11T00:00:00.000+00:00\"",
+											"            },",
+											"            \"teacher\": {",
+											"                \"id\": pm.environment.get('TEACHER_ID'),",
+											"                \"name\": \"Andrés\",",
+											"                \"lastname\": \"García\",",
+											"                \"email\": \"agarcia@gmail.com\",",
+											"                \"phone\": \"644578205\",",
+											"                \"age\": 23,",
+											"                \"address\": \"Calle San Miguel del Teide\"",
+											"            },",
+											"            \"code\": \"CCM1\"",
+											"        }",
+											"    );",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const location = pm.response.headers.get('Location');",
+											"    pm.expect(location).to.include('/api/v1/courses/');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso de cocina medieval\",\n    \"description\": \"Formación para aprender a cocinar como auténticos caballeros de la época medieval.\",\n    \"code\": \"CCM1\",\n    \"school\": {\n        \"id\": \"{{SCHOOL_ID}}\"\n    },\n    \"teacher\": {\n        \"id\": \"{{TEACHER_ID}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Course 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Create course', () => {",
+											"    pm.response.to.have.status(201);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.environment.set('COURSE_ID_2', body.id);",
+											"    pm.expect(body).to.deep.include(",
+											"        {",
+											"            \"id\": body.id,",
+											"            \"name\": \"Curso de cocina nórdica\",",
+											"            \"description\": \"Formación para aprender a cocinar como auténticos vikingos de la época nórdica.\",",
+											"            \"code\": \"CCN1\",",
+											"            \"students\": [],",
+											"            \"school\": {",
+											"                \"id\": pm.environment.get('SCHOOL_ID'),",
+											"                \"name\": \"Colegio Santa María\",",
+											"                \"startDate\": \"2001-09-11T00:00:00.000+00:00\"",
+											"            },",
+											"            \"teacher\": {",
+											"                \"id\": pm.environment.get('TEACHER_ID'),",
+											"                \"name\": \"Andrés\",",
+											"                \"lastname\": \"García\",",
+											"                \"email\": \"agarcia@gmail.com\",",
+											"                \"phone\": \"644578205\",",
+											"                \"age\": 23,",
+											"                \"address\": \"Calle San Miguel del Teide\"",
+											"            },",
+											"        }",
+											"    );",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses\");",
+											"",
+											"    const location = pm.response.headers.get('Location');",
+											"    pm.expect(location).to.include('/api/v1/courses/');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Curso de cocina nórdica\",\n    \"description\": \"Formación para aprender a cocinar como auténticos vikingos de la época nórdica.\",\n    \"code\": \"CCN1\",\n    \"school\": {\n        \"id\": \"{{SCHOOL_ID}}\"\n    },\n    \"teacher\": {\n        \"id\": \"{{TEACHER_ID}}\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Courses with No Params",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Get filtered Courses', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.expect(body).to.be.an(\"array\");",
+											"    pm.expect(body).to.have.length(1);",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses/search\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"nórdica\",\n    \"description\": \"época\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses/search",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses",
+										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Courses with DESC Params",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Get filtered Courses', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.expect(body).to.be.an(\"array\");",
+											"    pm.expect(body).to.have.length(2);",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses/search\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses/search?direction=desc",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses",
+										"search"
+									],
+									"query": [
+										{
+											"key": "sortBy",
+											"value": "code",
+											"disabled": true
+										},
+										{
+											"key": "match",
+											"value": "exact",
+											"disabled": true
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Courses with EXACT Param",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Get filtered Courses', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.expect(body).to.be.an(\"array\");",
+											"    pm.expect(body).to.have.length(1);",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses/search\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"CCN1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses/search?match=exact",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses",
+										"search"
+									],
+									"query": [
+										{
+											"key": "sortBy",
+											"value": "code",
+											"disabled": true
+										},
+										{
+											"key": "match",
+											"value": "exact"
+										},
+										{
+											"key": "direction",
+											"value": "desc",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Courses with SortBy Param",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Get filtered Courses', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.expect(body).to.be.an(\"array\");",
+											"    pm.expect(body).to.have.length(2);",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses/search\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses/search?sortBy=description",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses",
+										"search"
+									],
+									"query": [
+										{
+											"key": "sortBy",
+											"value": "description"
+										},
+										{
+											"key": "match",
+											"value": "exact",
+											"disabled": true
+										},
+										{
+											"key": "direction",
+											"value": "desc",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Courses with All Params",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Get filtered Courses', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    const body = res.body;",
+											"    pm.expect(body).to.be.an(\"array\");",
+											"    pm.expect(body).to.have.length(2);",
+											"    pm.expect(res.uri).to.be.eq(\"/api/v1/courses/search\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"CC\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses/search?sortBy=description&match=starting&direction=desc",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses",
+										"search"
+									],
+									"query": [
+										{
+											"key": "sortBy",
+											"value": "description"
+										},
+										{
+											"key": "match",
+											"value": "starting"
+										},
+										{
+											"key": "direction",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE Course 1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Delete course', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID')}`);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{COURSE_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE Course 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Delete course', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(`/api/v1/courses/${pm.environment.get('COURSE_ID_2')}`);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/courses/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"courses",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{COURSE_ID_2}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE Teacher",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Delete teacher', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(`/api/v1/teachers/${pm.environment.get('TEACHER_ID')}`);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/teachers/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"teachers",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{TEACHER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE School",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Delete school', () => {",
+											"    pm.response.to.have.status(200);",
+											"    const res = pm.response.json();",
+											"    pm.expect(res.timestamp).to.be.not.empty;",
+											"    pm.expect(res.uri).to.be.eq(`/api/v1/schools/${pm.environment.get('SCHOOL_ID')}`);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/api/v1/schools/:id",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"schools",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{SCHOOL_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Get All Courses",
 					"event": [
 						{

@@ -1,4 +1,4 @@
-package crosso.workshop.schools_api.model;
+package crosso.workshop.schools_api.model.student;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Getter

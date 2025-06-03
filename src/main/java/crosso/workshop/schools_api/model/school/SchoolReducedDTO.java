@@ -1,4 +1,4 @@
-package crosso.workshop.schools_api.model;
+package crosso.workshop.schools_api.model.school;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -6,21 +6,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeacherReducedDTO {
+public class SchoolReducedDTO {
 
-    @NotNull(message = "Teacher's id cannot be null")
+    @NotNull(message = "School's id cannot be null")
     private UUID id;
 
     private String name;
-    private String lastname;
-    private String email;
-    private String phone;
-    private Integer age;
-    private String address;
+    private Date startDate;
 }

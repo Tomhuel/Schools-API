@@ -1,7 +1,7 @@
 package crosso.workshop.schools_api.controller;
 
-import crosso.workshop.schools_api.model.SchoolDetailDTO;
-import crosso.workshop.schools_api.model.SchoolReducedDTO;
+import crosso.workshop.schools_api.model.school.SchoolDetailDTO;
+import crosso.workshop.schools_api.model.school.SchoolReducedDTO;
 import crosso.workshop.schools_api.service.SchoolService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import crosso.workshop.schools_api.utils.response.headers.URIFactory;

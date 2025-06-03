@@ -1,7 +1,6 @@
 package crosso.workshop.schools_api.controller;
 
-import crosso.workshop.schools_api.model.CourseDetailDTO;
-import crosso.workshop.schools_api.model.CourseReducedDTO;
+import crosso.workshop.schools_api.model.course.*;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import crosso.workshop.schools_api.service.CourseService;
 import crosso.workshop.schools_api.utils.response.headers.URIFactory;
@@ -9,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +57,35 @@ public class CourseController {
         response.setBody(course);
         response.setUri(httpServletRequest.getRequestURI());
         return ResponseEntity.created(location).body(response);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<APIResponse<List<CourseReducedDTO>>> searchCourse(
+            @RequestBody CourseSearchDTO courseSearch,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "CONTAINING") String match,
+            @RequestParam(defaultValue = "ASC") String direction
+    ) {
+        APIResponse<List<CourseReducedDTO>> response = new APIResponse<>();
+
+        ExampleMatcher.StringMatcher matcher = switch (match.toUpperCase()) {
+            case "EXACT" -> ExampleMatcher.StringMatcher.EXACT;
+            case "STARTING" -> ExampleMatcher.StringMatcher.STARTING;
+            case "ENDING" -> ExampleMatcher.StringMatcher.ENDING;
+            default -> ExampleMatcher.StringMatcher.CONTAINING;
+        };
+
+        Sort.Direction sortDirection = switch (direction.toUpperCase()) {
+            case "DESC" -> Sort.Direction.DESC;
+            default -> Sort.Direction.ASC;
+        };
+
+        List<CourseReducedDTO> courses = courseService.searchCourses(courseSearch, sortBy, matcher, sortDirection);
+
+        response.setUri(httpServletRequest.getRequestURI());
+        response.setBody(courses);
+
+        return ResponseEntity.ok(response);
     }
 
     @SneakyThrows
