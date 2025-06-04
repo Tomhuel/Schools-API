@@ -4,6 +4,9 @@ import crosso.workshop.schools_api.model.course.*;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import crosso.workshop.schools_api.service.CourseService;
 import crosso.workshop.schools_api.utils.response.headers.URIFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,12 +22,14 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "Courses")
 @RequestMapping("api/v1/courses")
 public class CourseController {
     private final CourseService courseService;
     private final HttpServletRequest httpServletRequest;
     private final URIFactory uriFactory;
 
+    @Operation(summary = "Get all courses")
     @GetMapping()
     public ResponseEntity<APIResponse<List<CourseReducedDTO>>> getAllCourses() {
         List<CourseReducedDTO> courses = courseService.getAll();
@@ -36,8 +41,9 @@ public class CourseController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Get single course")
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<CourseDetailDTO>> getCourse(@PathVariable UUID id) {
+    public ResponseEntity<APIResponse<CourseDetailDTO>> getCourse(@Parameter(description = "Course's UUID to get") @PathVariable UUID id) {
         CourseDetailDTO course = courseService.getById(id);
         APIResponse<CourseDetailDTO> response = new APIResponse<>();
         response.setBody(course);
@@ -47,6 +53,7 @@ public class CourseController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Create course")
     @PostMapping()
     public ResponseEntity<APIResponse<CourseDetailDTO>> createCourse(@RequestBody @Valid CourseDetailDTO course) {
         course = courseService.create(course);
@@ -60,11 +67,13 @@ public class CourseController {
     }
 
     @PostMapping("/search")
+    @Operation(summary = "Search courses")
     public ResponseEntity<APIResponse<List<CourseReducedDTO>>> searchCourse(
             @RequestBody CourseSearchDTO courseSearch,
-            @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "CONTAINING") String match,
-            @RequestParam(defaultValue = "ASC") String direction
+            @Parameter(description = "Sort the objects by {propertyName}") @RequestParam(defaultValue = "name") String sortBy,
+            @Parameter(description = "Type of matching (insensitive case)") @RequestParam(defaultValue =
+                    "CONTAINING") String match,
+            @Parameter(description = "Sorting order") @RequestParam(defaultValue = "ASC") String direction
     ) {
         APIResponse<List<CourseReducedDTO>> response = new APIResponse<>();
 
@@ -89,8 +98,9 @@ public class CourseController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Update course")
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<CourseDetailDTO>> updateCourse(@PathVariable UUID id, @RequestBody @Valid CourseDetailDTO course) {
+    public ResponseEntity<APIResponse<CourseDetailDTO>> updateCourse(@Parameter(description = "Course's ID to update") @PathVariable UUID id, @RequestBody @Valid CourseDetailDTO course) {
         course = courseService.update(id, course);
         APIResponse<CourseDetailDTO> response = new APIResponse<>();
         response.setBody(course);
@@ -100,8 +110,9 @@ public class CourseController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Delete course")
     @DeleteMapping("/{id}")
-    public ResponseEntity<APIResponse<String>> deleteCourse(@PathVariable UUID id) {
+    public ResponseEntity<APIResponse<String>> deleteCourse(@Parameter(description = "Course's ID to update") @PathVariable UUID id) {
         courseService.delete(id);
 
         APIResponse<String> response = new APIResponse<>();

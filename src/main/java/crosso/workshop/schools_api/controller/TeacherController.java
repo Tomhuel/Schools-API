@@ -6,6 +6,8 @@ import crosso.workshop.schools_api.model.teacher.TeacherReducedDTO;
 import crosso.workshop.schools_api.service.TeacherService;
 import crosso.workshop.schools_api.utils.response.APIResponse;
 import crosso.workshop.schools_api.utils.response.headers.URIFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,12 +21,14 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "Teachers")
 @RequestMapping("api/v1/teachers")
 public class TeacherController {
     private final TeacherService teacherService;
     private final HttpServletRequest httpServletRequest;
     private final URIFactory uriFactory;
 
+    @Operation(summary = "Get all teachers")
     @GetMapping()
     public ResponseEntity<APIResponse<List<TeacherReducedDTO>>> getAllTeacher() {
         List<TeacherReducedDTO> teacherEntities = teacherService.getAll();
@@ -36,6 +40,7 @@ public class TeacherController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Get all students by a teacher's ID")
     @GetMapping("/{id}/students")
     public ResponseEntity<APIResponse<List<StudentDetailDTO>>> getTeacherStudents(@PathVariable UUID id) {
         List<StudentDetailDTO> students = teacherService.getStudentsByTeacherId(id);
@@ -48,6 +53,7 @@ public class TeacherController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Get single teacher")
     @GetMapping("/{id}")
     public ResponseEntity<APIResponse<TeacherDetailDTO>> getTeacher(@PathVariable UUID id) {
         TeacherDetailDTO teacher = teacherService.getById(id);
@@ -60,6 +66,7 @@ public class TeacherController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Create teacher")
     @PostMapping()
     public ResponseEntity<APIResponse<TeacherDetailDTO>> createTeacher(@RequestBody @Valid TeacherDetailDTO teacher) {
         teacher = teacherService.create(teacher);
@@ -74,6 +81,7 @@ public class TeacherController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Update teacher")
     @PutMapping("/{id}")
     public ResponseEntity<APIResponse<TeacherDetailDTO>> updateTeacher(@PathVariable UUID id, @RequestBody @Valid TeacherDetailDTO teacher) {
         teacher = teacherService.update(id, teacher);
@@ -86,6 +94,7 @@ public class TeacherController {
     }
 
     @SneakyThrows
+    @Operation(summary = "Delete teacher")
     @DeleteMapping("/{id}")
     public ResponseEntity<APIResponse<String>> deleteTeacher(@PathVariable UUID id) {
         teacherService.delete(id);
