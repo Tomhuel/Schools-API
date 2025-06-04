@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,15 +69,15 @@ public class CourseController {
 
     @PostMapping("/search")
     @Operation(summary = "Search courses")
-    public ResponseEntity<APIResponse<List<CourseReducedDTO>>> searchCourse(
+    public ResponseEntity<Page<CourseReducedDTO>> searchCourse(
             @RequestBody CourseSearchDTO courseSearch,
             @Parameter(description = "Sort the objects by {propertyName}") @RequestParam(defaultValue = "name") String sortBy,
             @Parameter(description = "Type of matching (insensitive case)") @RequestParam(defaultValue =
                     "CONTAINING") String match,
-            @Parameter(description = "Sorting order") @RequestParam(defaultValue = "ASC") String direction
+            @Parameter(description = "Sorting order") @RequestParam(defaultValue = "ASC") String direction,
+            @Parameter(description = "Page index") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page's size") @RequestParam(defaultValue = "50") int size
     ) {
-        APIResponse<List<CourseReducedDTO>> response = new APIResponse<>();
-
         ExampleMatcher.StringMatcher matcher = switch (match.toUpperCase()) {
             case "EXACT" -> ExampleMatcher.StringMatcher.EXACT;
             case "STARTING" -> ExampleMatcher.StringMatcher.STARTING;
@@ -89,12 +90,10 @@ public class CourseController {
             default -> Sort.Direction.ASC;
         };
 
-        List<CourseReducedDTO> courses = courseService.searchCourses(courseSearch, sortBy, matcher, sortDirection);
+        Page<CourseReducedDTO> courses = courseService.searchCourses(courseSearch, sortBy, matcher, sortDirection,
+                page, size);
 
-        response.setUri(httpServletRequest.getRequestURI());
-        response.setBody(courses);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(courses);
     }
 
     @SneakyThrows

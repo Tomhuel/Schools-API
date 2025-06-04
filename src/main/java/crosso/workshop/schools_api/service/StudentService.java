@@ -7,6 +7,9 @@ import crosso.workshop.schools_api.model.student.StudentReducedDTO;
 import crosso.workshop.schools_api.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -23,6 +26,12 @@ public class StudentService {
     public List<StudentReducedDTO> getAll() {
         List<StudentEntity> students = studentRepository.findAll();
         return students.stream().map(s -> mapper.map(s, StudentReducedDTO.class)).toList();
+    }
+
+    public Page<StudentReducedDTO> getAllPaginated(int page, int size) {
+        final Pageable pageable = PageRequest.of(page, size);
+        Page<StudentEntity> students = studentRepository.findAll(pageable);
+        return students.map(student -> mapper.map(student, StudentReducedDTO.class));
     }
 
     public StudentDetailDTO getById(UUID id) throws EntityNotFoundException {

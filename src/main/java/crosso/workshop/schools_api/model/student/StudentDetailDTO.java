@@ -37,6 +37,4 @@ public class StudentDetailDTO {
     private String address;
 
     private Set<CourseDetailDTO> courses = new HashSet<>();
-
-    private Set<TeacherDetailDTO> teachers = new HashSet<>();
 }

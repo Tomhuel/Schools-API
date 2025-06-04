@@ -4,11 +4,15 @@ import crosso.workshop.schools_api.entity.StudentEntity;
 import crosso.workshop.schools_api.entity.TeacherEntity;
 import crosso.workshop.schools_api.exception.EntityNotFoundException;
 import crosso.workshop.schools_api.model.student.StudentDetailDTO;
+import crosso.workshop.schools_api.model.student.StudentReducedDTO;
 import crosso.workshop.schools_api.model.teacher.TeacherDetailDTO;
 import crosso.workshop.schools_api.model.teacher.TeacherReducedDTO;
 import crosso.workshop.schools_api.repository.TeacherRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -27,6 +31,12 @@ public class TeacherService {
         return teachers.stream().map(t -> mapper.map(t, TeacherReducedDTO.class)).toList();
     }
 
+    public Page<TeacherReducedDTO> getPaginated(int page, int size) {
+        final Pageable pageable = PageRequest.of(page, size);
+        Page<TeacherEntity> teachers = teacherRepository.findAll(pageable);
+        return teachers.map(teacher -> mapper.map(teacher, TeacherReducedDTO.class));
+    }
+
     public TeacherDetailDTO getById(UUID id) throws EntityNotFoundException {
         return mapper.map(getEntityById(id), TeacherDetailDTO.class);
     }
@@ -35,9 +45,10 @@ public class TeacherService {
         return teacherRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Teacher", id.toString()));
     }
 
-    public List<StudentDetailDTO> getStudentsByTeacherId(UUID teacherId) {
-        List<StudentEntity> students = teacherRepository.getStudentsByTeacherId(teacherId);
-        return students.stream().map(s -> mapper.map(s, StudentDetailDTO.class)).toList();
+    public Page<StudentReducedDTO> getStudentsPaginated(UUID teacherId, int page, int size) {
+        final Pageable pageable = PageRequest.of(page, size);
+        Page<StudentEntity> students = teacherRepository.getStudentsByTeacherId(teacherId, pageable);
+        return students.map(student -> mapper.map(student, StudentReducedDTO.class));
     }
 
     public TeacherDetailDTO create(TeacherDetailDTO teacher) {

@@ -12,9 +12,7 @@ import crosso.workshop.schools_api.model.teacher.TeacherReducedDTO;
 import crosso.workshop.schools_api.repository.CourseRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -34,6 +32,12 @@ public class CourseService {
         return courses.stream().map(c -> mapper.map(c, CourseReducedDTO.class)).toList();
     }
 
+    public Page<CourseReducedDTO> getPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CourseEntity> courses = courseRepository.findAll(pageable);
+        return courses.map(course -> mapper.map(course, CourseReducedDTO.class));
+    }
+
     public CourseDetailDTO getById(UUID id) throws EntityNotFoundException {
         return mapper.map(this.getEntityById(id), CourseDetailDTO.class);
     }
@@ -42,11 +46,13 @@ public class CourseService {
         return courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course", id.toString()));
     }
 
-    public List<CourseReducedDTO> searchCourses(
+    public Page<CourseReducedDTO> searchCourses(
             CourseSearchDTO courseSearch,
             String sortBy,
             ExampleMatcher.StringMatcher match,
-            Sort.Direction direction
+            Sort.Direction direction,
+            int page,
+            int size
     ) {
 
         CourseEntity courseEntity = mapper.map(courseSearch, CourseEntity.class);
@@ -61,9 +67,11 @@ public class CourseService {
 
         Sort sort = Sort.by(direction, sortBy);
 
-        List<CourseEntity> courses = courseRepository.findAll(example, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        return courses.stream().map(c -> mapper.map(c, CourseReducedDTO.class)).toList();
+        Page<CourseEntity> courses = courseRepository.findAll(example, pageable);
+
+        return courses.map(c -> mapper.map(c, CourseReducedDTO.class));
     }
 
     public CourseDetailDTO create(CourseDetailDTO course) throws EntityNotFoundException {

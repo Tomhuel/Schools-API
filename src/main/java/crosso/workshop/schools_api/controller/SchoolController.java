@@ -12,11 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,13 +31,12 @@ public class SchoolController {
 
     @Operation(summary = "Get all schools")
     @GetMapping()
-    public ResponseEntity<APIResponse<List<SchoolReducedDTO>>> getAllSchools() {
-        List<SchoolReducedDTO> schools = schoolService.getAll();
-        APIResponse<List<SchoolReducedDTO>> response = new APIResponse<>();
-        response.setBody(schools);
-        response.setUri(httpServletRequest.getRequestURI());
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Page<SchoolReducedDTO>> getAllSchools(
+            @Parameter(description = "Page index") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page's size") @RequestParam(defaultValue = "50") int size
+    ) {
+        Page<SchoolReducedDTO> schools = schoolService.getAllPaginated(page, size);
+        return ResponseEntity.ok(schools);
     }
 
     @SneakyThrows
